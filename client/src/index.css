@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-image: url('data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 1440 320%22%3E%3Cpath fill%3D%22%23b9eeba%22 fill-opacity%3D%221%22 d%3D%22M0%2C192L34.3%2C192C68.6%2C192%2C137%2C192%2C206%2C170.7C274.3%2C149%2C343%2C107%2C411%2C117.3C480%2C128%2C549%2C192%2C617%2C229.3C685.7%2C267%2C754%2C277%2C823%2C256C891.4%2C235%2C960%2C181%2C1029%2C149.3C1097.1%2C117%2C1166%2C107%2C1234%2C122.7C1302.9%2C139%2C1371%2C181%2C1406%2C202.7L1440%2C224L1440%2C0L1405.7%2C0C1371.4%2C0%2C1303%2C0%2C1234%2C0C1165.7%2C0%2C1097%2C0%2C1029%2C0C960%2C0%2C891%2C0%2C823%2C0C754.3%2C0%2C686%2C0%2C617%2C0C548.6%2C0%2C480%2C0%2C411%2C0C342.9%2C0%2C274%2C0%2C206%2C0C137.1%2C0%2C69%2C0%2C34%2C0L0%2C0Z%22%3E%3C/path%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
