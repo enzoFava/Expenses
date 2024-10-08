@@ -1,8 +1,42 @@
-import React from "react";
-import { Container, Typography, Grid2, Box, Button, useMediaQuery } from "@mui/material";
+import React, {useState, useEffect} from "react";
+import {
+  Container,
+  Typography,
+  Grid2,
+  Box,
+  Button,
+  useMediaQuery,
+  Dialog,
+} from "@mui/material";
+import LoginDialog from "../LoginDialog";
+import RegisterDialog from "../RegisterDialog";
+import axios from "axios";
 
 const Home = () => {
-    const isMobile = useMediaQuery("(max-width:600px)");
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const [ openLogin, setOpenLogin] = useState(false);
+  const [ openRegister, setOpenRegister] = useState(false);
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const response = await axios.get('http://localhost:8000/users')
+      console.log(response.data)
+    }
+    getUsers();
+  })
+
+  const handleAuth = (e) => {
+    console.log(e.target.value);
+    const action = e.target.value;
+
+    if (action === "login") {
+      setOpenLogin(true)
+    }
+
+    if (action === "register") {
+      setOpenRegister(true)
+    }
+  };
 
   return (
     <>
@@ -11,7 +45,7 @@ const Home = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "85vh",
+          height: "100vh",
         }}
       >
         <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -76,9 +110,11 @@ const Home = () => {
                 }}
               >
                 <Button
+                  value="register"
+                  onClick={handleAuth}
                   sx={{
-                    margin: '3%',
-                    fontWeight: '600',
+                    margin: "3%",
+                    fontWeight: "600",
                     textDecoration: "none",
                     fontFamily: "'Quicksand', sans-serif",
                     padding: "6px 16px",
@@ -94,9 +130,11 @@ const Home = () => {
                   Register
                 </Button>
                 <Button
+                  value="login"
+                  onClick={handleAuth}
                   sx={{
-                    margin: '3%',
-                    fontWeight: '600',
+                    margin: "3%",
+                    fontWeight: "600",
                     textDecoration: "none",
                     fontFamily: "'Quicksand', sans-serif",
                     padding: "6px 16px",
@@ -116,6 +154,8 @@ const Home = () => {
           </Grid2>
         </Grid2>
       </Box>
+      <LoginDialog open={openLogin} close={() => setOpenLogin(false)} register={() => setOpenRegister(true)}/>
+      <RegisterDialog open={openRegister} close={() => setOpenRegister(false)}/>
     </>
   );
 };
