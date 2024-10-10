@@ -25,8 +25,8 @@ const AddDialog = ({ open, close }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const [date, setDate] = useState(getCurrentDate());
-  
+  const date = getCurrentDate();
+
   const [newExpense, setNewExpense] = useState({
     user: "",
     title: "",
