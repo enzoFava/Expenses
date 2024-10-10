@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {useState, useEffect} from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,13 +12,20 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { useNavigate, useLocation } from "react-router-dom";
+import {toast} from "react-toastify";
 
-const pages = ["Contact"];
+const pages = ["Contact", "Dashboard"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+function Navbar({auth}) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [scrollToContact, setScrollToContact] = useState(false);
+
+ 
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -29,11 +36,35 @@ function Navbar() {
 
   const handleCloseNavMenu = (e) => {
     setAnchorElNav(null);
-    window.scrollTo({
-      top: 900,
-      behavior: "smooth",
-    });
+    const action = e.target.innerHTML.split("")[0];
+    if (action === "C") {
+      const from = location.pathname;
+      if (from === "/") {
+        window.scrollTo({
+          top: 900,
+          behavior: "smooth",
+        });
+      }
+      setScrollToContact(true)
+      navigate('/home')
+    }
+    if (action === "D") {
+      navigate("/dashboard");
+      if (!auth) {
+        toast.warn("Login first")
+      }
+    }
   };
+
+  useEffect(() => {
+    if (scrollToContact && location.pathname === '/home') {
+      window.scrollTo({
+        top: 900,
+        behavior: "smooth",
+      });
+      setScrollToContact(false) 
+    }
+  },[location.pathname, scrollToContact])
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
@@ -52,7 +83,7 @@ function Navbar() {
               variant="h6"
               noWrap
               component="a"
-              href="/"
+              href="/home"
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
@@ -95,7 +126,14 @@ function Navbar() {
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography sx={{ textAlign: "center", fontFamily: 'Quicksand, sans-serif' }}>{page}</Typography>
+                    <Typography
+                      sx={{
+                        textAlign: "center",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      {page}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Menu>
@@ -125,8 +163,8 @@ function Navbar() {
                   key={page}
                   onClick={handleCloseNavMenu}
                   sx={{
-                    fontFamily: 'Quicksand, sans-serif',
-                    fontWeight: '600',
+                    fontFamily: "Quicksand, sans-serif",
+                    fontWeight: "600",
                     my: 2,
                     color: "#153316",
                     display: "block",

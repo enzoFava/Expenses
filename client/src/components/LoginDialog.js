@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogActions,
@@ -8,10 +8,33 @@ import {
   DialogTitle,
   TextField,
   Typography,
-  Zoom
+  Zoom,
 } from "@mui/material";
+import { login } from "../api/usersAPI"
+import { toast } from "react-toastify";
 
 const LoginDialog = ({ open, close, register }) => {
+  const [user, setUser] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await login(user)
+      const newUser = response.data
+      toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
+      close(); ///////////////////////////////////////////////////////////////////////////////////
+      localStorage.setItem('token', newUser.access)
+    } catch (error) {
+      console.error(error)
+      toast.error("Incorrect email or password")
+    }
+  };
+
   return (
     <Dialog
       open={open}
@@ -29,36 +52,36 @@ const LoginDialog = ({ open, close, register }) => {
         },
       }}
     >
-      <IconButton
-        size="medium"
-        onClick={close}
-        sx={{
-          position: "absolute",
-          right: "1rem",
-          top: "1rem",
-          "&:hover": { background: "#fff", color: "black" },
-        }}
-      >
-        X
-      </IconButton>
-      <DialogTitle
-        sx={{
-          fontFamily: "'Montserrat', sans-serif",
-          fontWeight: "bold",
-          fontSize: "1.5em",
-          position: "relative",
-          width: "80%",
-        }}
-      >
-        Log In
-      </DialogTitle>
-      <DialogContent sx={{ marginTop: 1 }}>
-        <form onSubmit={""}>
+      <form onSubmit={handleSubmit}>
+        <IconButton
+          size="medium"
+          onClick={close}
+          sx={{
+            position: "absolute",
+            right: "1rem",
+            top: "1rem",
+            "&:hover": { background: "#fff", color: "black" },
+          }}
+        >
+          X
+        </IconButton>
+        <DialogTitle
+          sx={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: "bold",
+            fontSize: "1.5em",
+            position: "relative",
+            width: "80%",
+          }}
+        >
+          Log In
+        </DialogTitle>
+        <DialogContent sx={{ marginTop: 1 }}>
           <TextField
             name="email"
             label="Email"
             type="email"
-            onChange={""}
+            onChange={handleChange}
             fullWidth
             margin="normal"
             required
@@ -68,7 +91,7 @@ const LoginDialog = ({ open, close, register }) => {
             name="password"
             label="Password"
             type="password"
-            onChange={""}
+            onChange={handleChange}
             fullWidth
             margin="normal"
             required
@@ -78,9 +101,12 @@ const LoginDialog = ({ open, close, register }) => {
             variant="body2"
             sx={{ fontFamily: "'Montserrat', sans-serif", marginTop: 2 }}
           >
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <Button
-              onClick={() => {register(); close()}}
+              onClick={() => {
+                register();
+                close();
+              }}
               sx={{
                 textDecoration: "underline",
                 padding: 0,
@@ -90,27 +116,26 @@ const LoginDialog = ({ open, close, register }) => {
                 },
               }}
             >
-               Register
+              Register
             </Button>
           </Typography>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
-        <Button
-          type="submit"
-          onClick={""}
-          sx={{
-            fontFamily: "'Montserrat', sans-serif",
-            backgroundColor: "#4caf50", // Example color for submit button
-            "&:hover": {
-              backgroundColor: "#388e3c", // Hover color
-            },
-          }}
-          variant="contained"
-        >
-          Log In
-        </Button>
-      </DialogActions>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
+          <Button
+            type="submit"
+            sx={{
+              fontFamily: "'Montserrat', sans-serif",
+              backgroundColor: "#4caf50", // Example color for submit button
+              "&:hover": {
+                backgroundColor: "#388e3c", // Hover color
+              },
+            }}
+            variant="contained"
+          >
+            Log In
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };

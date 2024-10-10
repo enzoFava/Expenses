@@ -1,4 +1,8 @@
-import React from "react";
 import axios from 'axios';
 
-const BASE_URL = [ "http://localhost:8000" ]
+const api = axios.create({
+    baseURL: 'http://localhost:8000/'
+})
+
+export const login = (user) => api.post("/login/", user)
+export const register = (user) => api.post("/register/", user)

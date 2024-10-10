@@ -2,21 +2,21 @@
 This module defines the models for the expenses app.
 It contains two models: `ExpendsUsers` and `ExpendsUserData`.
 """
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 
 # Create your models here.
 
 
-class ExpensesUsers(models.Model):
+class ExpensesUsers(AbstractUser):
     """
     Model representing a user who can track expenses.
     """
-    id = models.AutoField(primary_key=True)
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
         return f"{self.email} - {self.id}"
@@ -41,7 +41,7 @@ class ExpensesUserData(models.Model):
     title = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
-    date = models.DateField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         # pylint: disable=E1101

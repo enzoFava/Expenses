@@ -1,33 +1,70 @@
-import React from 'react'
+import React, { useState } from "react";
 import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    Button,
-    IconButton,
-    DialogTitle,
-    TextField,
-    Zoom
-  } from "@mui/material";
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Button,
+  IconButton,
+  DialogTitle,
+  TextField,
+  Zoom,
+} from "@mui/material";
+import {register} from "../api/usersAPI"
+import { toast } from "react-toastify";
+
 
 const RegisterDialog = ({ open, close }) => {
+  const [user, setUser] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await register(user)
+      const newUser = response.data.user
+      toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
+      close(); ////////////////////////////////////////////////////////////////////////////////////////////
+      localStorage.setItem('token', newUser.access)
+    } catch (error) {
+      if (error.status === 400) {
+        console.error("Email already exists : "+ error)
+      toast.error("Email already exists. Try a different one")
+      } else {
+        console.error("Something went wrong" + error)
+        toast.error("Something went worng")
+      }
+      
+
+    }
+  };
+
   return (
     <Dialog
-        open={open}
-        maxWidth="sm"
-        scroll="body"
-        onClose={close}
-        TransitionComponent={Zoom}
-        sx={{
-          "& .MuiDialog-paper": {
-            borderRadius: "10px",
-            padding: "16px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-            width: "90%" /* Make dialog width responsive */,
-            maxWidth: "500px" /* Limit maximum width */,
-          },
-        }}
-      >
+      open={open}
+      maxWidth="sm"
+      scroll="body"
+      onClose={close}
+      TransitionComponent={Zoom}
+      sx={{
+        "& .MuiDialog-paper": {
+          borderRadius: "10px",
+          padding: "16px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+          width: "90%" /* Make dialog width responsive */,
+          maxWidth: "500px" /* Limit maximum width */,
+        },
+      }}
+    >
+      <form onSubmit={handleSubmit}>
         <IconButton
           size="medium"
           onClick={close}
@@ -49,58 +86,55 @@ const RegisterDialog = ({ open, close }) => {
             width: "80%",
           }}
         >
-        Register
+          Register
         </DialogTitle>
         <DialogContent sx={{ marginTop: 1 }}>
-          <form onSubmit={""}>
-                <TextField
-                  name="firstName"
-                  label="First Name"
-                  onChange={""}
-                  fullWidth
-                  margin="normal"
-                  required
-                  InputProps={{
-                    sx: { fontFamily: "'Montserrat', sans-serif" },
-                  }} // Custom Input styles
-                />
-                <TextField
-                  name="lastName"
-                  label="Last Name"
-                  onChange={""}
-                  fullWidth
-                  margin="normal"
-                  required
-                  InputProps={{
-                    sx: { fontFamily: "'Montserrat', sans-serif" },
-                  }} // Custom Input styles
-                />
-            <TextField
-              name="email"
-              label="Email"
-              type="email"
-              onChange={""}
-              fullWidth
-              margin="normal"
-              required
-              InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
-            />
-            <TextField
-              name="password"
-              label="Password"
-              type="password"
-              onChange={""}
-              fullWidth
-              margin="normal"
-              required
-              InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
-            />
-          </form>
+          <TextField
+            name="first_name"
+            label="First Name"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              sx: { fontFamily: "'Montserrat', sans-serif" },
+            }} // Custom Input styles
+          />
+          <TextField
+            name="last_name"
+            label="Last Name"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              sx: { fontFamily: "'Montserrat', sans-serif" },
+            }} // Custom Input styles
+          />
+          <TextField
+            name="email"
+            label="Email"
+            type="email"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+          />
+          <TextField
+            name="password"
+            label="Password"
+            type="password"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+          />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
             type="submit"
-            onClick={""}
             sx={{
               fontFamily: "'Montserrat', sans-serif",
               backgroundColor: "#4caf50", // Example color for submit button
@@ -113,8 +147,9 @@ const RegisterDialog = ({ open, close }) => {
             Register
           </Button>
         </DialogActions>
-      </Dialog>
-  )
-}
+      </form>
+    </Dialog>
+  );
+};
 
-export default RegisterDialog
+export default RegisterDialog;
