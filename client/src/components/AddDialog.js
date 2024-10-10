@@ -9,33 +9,49 @@ import {
   TextField,
   Typography,
   Zoom,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
-import { login } from "../api/usersAPI"
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
-const LoginDialog = ({ open, close, register, onLogin }) => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState({ email: "", password: "" });
+const AddDialog = ({ open, close }) => {
+      // GET TODAY DATE //
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const [date, setDate] = useState(getCurrentDate());
+  
+  const [newExpense, setNewExpense] = useState({
+    user: "",
+    title: "",
+    amount: "",
+    category: "",
+    date: date,
+  });
+  const [category, setCategory] = useState("");
+
+
+
+  const handleCategory = (e) => {
+    const selectedCat = e.target.value;
+    setCategory(selectedCat)
+    setNewExpense((prev) => ({ ...prev, category: selectedCat }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prev) => ({ ...prev, [name]: value }));
+    setNewExpense((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    try {
-      const response = await login(user)
-      const newUser = response.data
-      toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
-      close(); ///////////////////////////////////////////////////////////////////////////////////
-      localStorage.setItem('token', newUser.access)
-      onLogin();
-    } catch (error) {
-      console.error(error)
-      toast.error("Incorrect email or password")
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(newExpense);
   };
 
   return (
@@ -77,13 +93,12 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             width: "80%",
           }}
         >
-          Log In
+          Add New Expense
         </DialogTitle>
         <DialogContent sx={{ marginTop: 1 }}>
           <TextField
-            name="email"
-            label="Email"
-            type="email"
+            name="title"
+            label="Title"
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -91,9 +106,39 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
           />
           <TextField
-            name="password"
-            label="Password"
-            type="password"
+            name="amount"
+            label="Amount"
+            type="number"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+          />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Category</InputLabel>
+            <Select
+              onChange={handleCategory}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={category}
+              label="Category"
+            >
+              <MenuItem value={"clothes"}>Clothes</MenuItem>
+              <MenuItem value={"entertainment"}>Entertainment</MenuItem>
+              <MenuItem value={"food"}>Food</MenuItem>
+              <MenuItem value={"gifts"}>Gifts</MenuItem>
+              <MenuItem value={"health"}>Health</MenuItem>
+              <MenuItem value={"house"}>House</MenuItem>
+              <MenuItem value={"pets"}>Pets</MenuItem>
+              <MenuItem value={"transport"}>Transport</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            name="date"
+            type="date"
+            label="Select date"
+            value={newExpense.date || date}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -107,7 +152,6 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             Don't have an account?{" "}
             <Button
               onClick={() => {
-                register();
                 close();
               }}
               sx={{
@@ -143,4 +187,4 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
   );
 };
 
-export default LoginDialog;
+export default AddDialog;

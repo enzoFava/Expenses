@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,19 +13,17 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useNavigate, useLocation } from "react-router-dom";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 const pages = ["Contact", "Dashboard"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function Navbar({auth}) {
+function Navbar({ auth, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [scrollToContact, setScrollToContact] = useState(false);
-
- 
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -45,29 +43,43 @@ function Navbar({auth}) {
           behavior: "smooth",
         });
       }
-      setScrollToContact(true)
-      navigate('/home')
+      setScrollToContact(true);
+      navigate("/home");
     }
     if (action === "D") {
       navigate("/dashboard");
       if (!auth) {
-        toast.warn("Login first")
+        toast.warn("Login first");
       }
     }
   };
 
   useEffect(() => {
-    if (scrollToContact && location.pathname === '/home') {
+    if (scrollToContact && location.pathname === "/home") {
       window.scrollTo({
         top: 900,
         behavior: "smooth",
       });
-      setScrollToContact(false) 
+      setScrollToContact(false);
     }
-  },[location.pathname, scrollToContact])
+  }, [location.pathname, scrollToContact]);
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
+    if (setting === "Logout") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        localStorage.removeItem("token");
+        toast.success("Good bye!");
+        onLogout();
+      }
+    }
+    if (setting === 'Dashboard') {
+      navigate("/dashboard");
+      if (!auth) {
+        toast.warn("Login first");
+      }
+    }
   };
 
   return (
@@ -201,7 +213,10 @@ function Navbar({auth}) {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting}
+                    onClick={() => handleCloseUserMenu(setting)}
+                  >
                     <Typography sx={{ textAlign: "center" }}>
                       {setting}
                     </Typography>

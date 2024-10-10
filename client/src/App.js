@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
-import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 
 import {
@@ -20,7 +19,6 @@ function App() {
       const token = localStorage.getItem("token");
       if (token) {
         setIsAuthenticated(true);
-        console.log("auth");
       } else {
         setIsAuthenticated(false);
       }
@@ -28,12 +26,20 @@ function App() {
     checkAuth();
   }, []);
 
+  function handleLogin(){
+    setIsAuthenticated(true)
+  }
+
+  function handleLogout() {
+    setIsAuthenticated(false)
+  }
+
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<MainLayout auth={isAuthenticated}/>}>
-        <Route index element={!isAuthenticated ? <Home auth={isAuthenticated}/> : <Dashboard auth={isAuthenticated}/>} />
-        <Route path="/home" element={<Home auth={isAuthenticated}/>} />
-        <Route path="/dashboard" element={isAuthenticated ? <Dashboard auth={isAuthenticated} /> : <Home auth={isAuthenticated}/>} />
+      <Route path="/" element={<MainLayout auth={isAuthenticated} onLogout={handleLogout}/>}>
+        <Route index element={!isAuthenticated ? <Home auth={isAuthenticated} onLogin={handleLogin}/> : <Dashboard auth={isAuthenticated}/>} />
+        <Route path="/home" element={<Home auth={isAuthenticated} onLogin={handleLogin}/>} />
+        <Route path="/dashboard" element={isAuthenticated ? <Dashboard auth={isAuthenticated} /> : <Home auth={isAuthenticated} onLogin={handleLogin}/>} />
       </Route>
     )
   );

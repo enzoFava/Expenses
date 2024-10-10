@@ -11,7 +11,7 @@ import LoginDialog from "../components/LoginDialog";
 import RegisterDialog from "../components/RegisterDialog";
 import Contact from "./Contact";
 
-const Home = ({auth}) => {
+const Home = ({auth, onLogin}) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [ openLogin, setOpenLogin] = useState(false);
   const [ openRegister, setOpenRegister] = useState(false);
@@ -148,7 +148,7 @@ const Home = ({auth}) => {
         </Grid2>
       </Box>
       <Contact />
-      <LoginDialog open={openLogin} close={() => setOpenLogin(false)} register={() => setOpenRegister(true)} auth={auth}/>
+      <LoginDialog open={openLogin} close={() => setOpenLogin(false)} register={() => setOpenRegister(true)} auth={auth} onLogin={onLogin}/>
       <RegisterDialog open={openRegister} close={() => setOpenRegister(false)} auth={auth}/>
     </>
   );

@@ -4,10 +4,10 @@ import Footer from "../components/Footer"
 import Toast from "../components/Toast";
 import { Outlet } from "react-router-dom"
 
-const MainLayout = ({auth}) => {
+const MainLayout = ({auth, onLogout}) => {
   return (
     <>
-        <Navbar auth={auth}/>
+        <Navbar auth={auth} onLogout={onLogout}/>
         <Outlet />
         <Toast />
         <Footer />
