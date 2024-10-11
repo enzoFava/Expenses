@@ -7,16 +7,17 @@ import {
   IconButton,
   DialogTitle,
   TextField,
-  Typography,
   Zoom,
   Select,
   FormControl,
   MenuItem,
   InputLabel,
 } from "@mui/material";
+import { jwtDecode } from "jwt-decode";
+import { addExpense } from '../../api/expensesAPI'
 
-const AddDialog = ({ open, close }) => {
-      // GET TODAY DATE //
+const AddDialog = ({ open, close, add }) => {
+  // GET TODAY DATE //
   const getCurrentDate = () => {
     const date = new Date();
     const year = date.getFullYear();
@@ -28,7 +29,6 @@ const AddDialog = ({ open, close }) => {
   const date = getCurrentDate();
 
   const [newExpense, setNewExpense] = useState({
-    user: "",
     title: "",
     amount: "",
     category: "",
@@ -36,22 +36,32 @@ const AddDialog = ({ open, close }) => {
   });
   const [category, setCategory] = useState("");
 
-
+  const token = localStorage.getItem("token");
+  const user = jwtDecode(token);
 
   const handleCategory = (e) => {
     const selectedCat = e.target.value;
-    setCategory(selectedCat)
+    setCategory(selectedCat);
     setNewExpense((prev) => ({ ...prev, category: selectedCat }));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewExpense((prev) => ({ ...prev, [name]: value }));
+    setNewExpense((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(newExpense);
+    try {
+      const response = await addExpense(newExpense, user.user_id);
+      console.log(response.data.newExpense)
+      close()
+    } catch (error) {
+      console.error("ERROR ADDING EXP : " + error)
+    }
   };
 
   return (
@@ -145,27 +155,6 @@ const AddDialog = ({ open, close }) => {
             required
             InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
           />
-          <Typography
-            variant="body2"
-            sx={{ fontFamily: "'Montserrat', sans-serif", marginTop: 2 }}
-          >
-            Don't have an account?{" "}
-            <Button
-              onClick={() => {
-                close();
-              }}
-              sx={{
-                textDecoration: "underline",
-                padding: 0,
-                color: "#3f51b5", // Change this to your desired color
-                "&:hover": {
-                  color: "#303f9f", // Hover color
-                },
-              }}
-            >
-              Register
-            </Button>
-          </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
@@ -179,7 +168,7 @@ const AddDialog = ({ open, close }) => {
             }}
             variant="contained"
           >
-            Log In
+            Submit
           </Button>
         </DialogActions>
       </form>

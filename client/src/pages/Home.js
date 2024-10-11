@@ -7,11 +7,11 @@ import {
   Button,
   useMediaQuery,
 } from "@mui/material";
-import LoginDialog from "../components/LoginDialog";
-import RegisterDialog from "../components/RegisterDialog";
+import LoginDialog from "../components/dialogs/LoginDialog";
+import RegisterDialog from "../components/dialogs/RegisterDialog";
 import Contact from "./Contact";
 
-const Home = ({auth, onLogin}) => {
+const Home = ({auth, onLogin, authUser}) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const [ openLogin, setOpenLogin] = useState(false);
   const [ openRegister, setOpenRegister] = useState(false);

@@ -7,16 +7,19 @@ import {
   IconButton,
   DialogTitle,
   TextField,
-  Typography,
   Zoom,
 } from "@mui/material";
-import { login } from "../api/usersAPI"
+import {register} from "../../api/usersAPI"
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
-const LoginDialog = ({ open, close, register, onLogin }) => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState({ email: "", password: "" });
+
+const RegisterDialog = ({ open, close }) => {
+  const [user, setUser] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,17 +27,23 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await login(user)
-      const newUser = response.data
+      const response = await register(user)
+      const newUser = response.data.user
       toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
-      close(); ///////////////////////////////////////////////////////////////////////////////////
+      close(); ////////////////////////////////////////////////////////////////////////////////////////////
       localStorage.setItem('token', newUser.access)
-      onLogin();
     } catch (error) {
-      console.error(error)
-      toast.error("Incorrect email or password")
+      if (error.status === 400) {
+        console.error("Email already exists : "+ error)
+      toast.error("Email already exists. Try a different one")
+      } else {
+        console.error("Something went wrong" + error)
+        toast.error("Something went worng")
+      }
+      
+
     }
   };
 
@@ -77,9 +86,31 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             width: "80%",
           }}
         >
-          Log In
+          Register
         </DialogTitle>
         <DialogContent sx={{ marginTop: 1 }}>
+          <TextField
+            name="first_name"
+            label="First Name"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              sx: { fontFamily: "'Montserrat', sans-serif" },
+            }} // Custom Input styles
+          />
+          <TextField
+            name="last_name"
+            label="Last Name"
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              sx: { fontFamily: "'Montserrat', sans-serif" },
+            }} // Custom Input styles
+          />
           <TextField
             name="email"
             label="Email"
@@ -100,28 +131,6 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             required
             InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
           />
-          <Typography
-            variant="body2"
-            sx={{ fontFamily: "'Montserrat', sans-serif", marginTop: 2 }}
-          >
-            Don't have an account?{" "}
-            <Button
-              onClick={() => {
-                register();
-                close();
-              }}
-              sx={{
-                textDecoration: "underline",
-                padding: 0,
-                color: "#3f51b5", // Change this to your desired color
-                "&:hover": {
-                  color: "#303f9f", // Hover color
-                },
-              }}
-            >
-              Register
-            </Button>
-          </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
@@ -135,7 +144,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             }}
             variant="contained"
           >
-            Log In
+            Register
           </Button>
         </DialogActions>
       </form>
@@ -143,4 +152,4 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
   );
 };
 
-export default LoginDialog;
+export default RegisterDialog;

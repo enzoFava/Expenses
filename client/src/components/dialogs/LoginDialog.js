@@ -7,19 +7,15 @@ import {
   IconButton,
   DialogTitle,
   TextField,
+  Typography,
   Zoom,
 } from "@mui/material";
-import {register} from "../api/usersAPI"
+import { login } from "../../api/usersAPI"
 import { toast } from "react-toastify";
 
-
-const RegisterDialog = ({ open, close }) => {
-  const [user, setUser] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    password: "",
-  });
+const LoginDialog = ({ open, close, register, onLogin }) => {
+  const [user, setUser] = useState({ email: "", password: "" });
+  const [resUser, setResUser] = useState ({})
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,23 +23,17 @@ const RegisterDialog = ({ open, close }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await register(user)
-      const newUser = response.data.user
-      toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
-      close(); ////////////////////////////////////////////////////////////////////////////////////////////
-      localStorage.setItem('token', newUser.access)
+      const response = await login(user)
+      setResUser(response.data)
+      toast.success(`Welcome ${resUser.first_name.toUpperCase()}!`)
+      close(); ///////////////////////////////////////////////////////////////////////////////////
+      localStorage.setItem('token', resUser.access)
+      onLogin(resUser);
     } catch (error) {
-      if (error.status === 400) {
-        console.error("Email already exists : "+ error)
-      toast.error("Email already exists. Try a different one")
-      } else {
-        console.error("Something went wrong" + error)
-        toast.error("Something went worng")
-      }
-      
-
+      console.error(error)
+      toast.error("Incorrect email or password")
     }
   };
 
@@ -86,31 +76,9 @@ const RegisterDialog = ({ open, close }) => {
             width: "80%",
           }}
         >
-          Register
+          Log In
         </DialogTitle>
         <DialogContent sx={{ marginTop: 1 }}>
-          <TextField
-            name="first_name"
-            label="First Name"
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-            InputProps={{
-              sx: { fontFamily: "'Montserrat', sans-serif" },
-            }} // Custom Input styles
-          />
-          <TextField
-            name="last_name"
-            label="Last Name"
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            required
-            InputProps={{
-              sx: { fontFamily: "'Montserrat', sans-serif" },
-            }} // Custom Input styles
-          />
           <TextField
             name="email"
             label="Email"
@@ -131,6 +99,28 @@ const RegisterDialog = ({ open, close }) => {
             required
             InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
           />
+          <Typography
+            variant="body2"
+            sx={{ fontFamily: "'Montserrat', sans-serif", marginTop: 2 }}
+          >
+            Don't have an account?{" "}
+            <Button
+              onClick={() => {
+                register();
+                close();
+              }}
+              sx={{
+                textDecoration: "underline",
+                padding: 0,
+                color: "#3f51b5", // Change this to your desired color
+                "&:hover": {
+                  color: "#303f9f", // Hover color
+                },
+              }}
+            >
+              Register
+            </Button>
+          </Typography>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
@@ -144,7 +134,7 @@ const RegisterDialog = ({ open, close }) => {
             }}
             variant="contained"
           >
-            Register
+            Log In
           </Button>
         </DialogActions>
       </form>
@@ -152,4 +142,4 @@ const RegisterDialog = ({ open, close }) => {
   );
 };
 
-export default RegisterDialog;
+export default LoginDialog;

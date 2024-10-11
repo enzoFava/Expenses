@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState, useEffect } from "react";
 import {
   MenuItem,
   Typography,
@@ -17,213 +17,383 @@ import {
   Paper,
   Divider,
 } from "@mui/material";
-import AddDialog from "../components/AddDialog";
+import AddDialog from "../components/dialogs/AddDialog";
+import IncomeDialog from "../components/dialogs/IncomeDialog";
+import { getExpenses, getIncomes } from "../api/expensesAPI";
+import { jwtDecode } from "jwt-decode";
 
-const Dashboard = () => {
+const Dashboard = ({ authUser }) => {
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openIncome, setOpenIncome] = useState(false);
+  const [expenses, setExpenses] = useState([]);
+  const [incomes, setIncomes] = useState([])
+  const token = localStorage.getItem("token");
+  const user = jwtDecode(token);
 
-  const [openAdd, setOpenAdd] = useState(false)
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        const response = await getExpenses(user.user_id);
+        const expenses_list = response.data.expenses;
+        setExpenses(expenses_list);
+        console.log("EXPENSES : " + expenses)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchIncomes = async () => {
+      try {
+        const response = await getIncomes(user.user_id);
+        const incomes_list = response.data.incomes;
+        setIncomes(incomes_list);
+        console.log("INCOMES : " + incomes)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchExpenses();
+    fetchIncomes(); 
+  }, []);
 
-  const handleAdd = () => {
-    setOpenAdd(true)
-  }
+  const handleAdd = (newExpense) => {
+    setOpenAdd(true);
+  };
+
+  const handleIncome = () => {
+    setOpenIncome(true);
+  };
 
   return (
     <>
-    <Box sx={{ display: "flex", height: "100vh", marginTop: "5%" }}>
-      {/* Sidebar */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            marginTop: "5%",
-            width: 240,
-            boxSizing: "border-box",
-            backgroundColor: "transparent", // Dark background
-            color: "#153316", // White text color
-          },
-        }}
-      >
-        <List>
-          <ListItem>
-            <Typography
-              variant="h6"
-              sx={{
-                color: "#153316",
-                fontWeight: 700,
-                padding: "16px 0",
-                fontFamily: "Quicksand, sans-serif",
-              }}
-            >
-              Actions
-            </Typography>
-          </ListItem>
-          <Divider />
-          <MenuItem sx={{ '&:hover':{backgroundColor: 'transparent', opacity: '40%'}}}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontFamily: "Quicksand, sans-serif",
-                color: "#153316",
-                
-              }}
-            >
-              My Wallet
-            </Typography>
-          </MenuItem>
-          <MenuItem 
-            onClick={handleAdd}
-            sx={{ '&:hover':{backgroundColor: 'transparent', opacity: '40%'}}}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontFamily: "Quicksand, sans-serif",
-                color: "#153316",
-                
-              }}
-            >
-              Add Expenses
-            </Typography>
-          </MenuItem>
-          <MenuItem sx={{ '&:hover':{backgroundColor: 'transparent', opacity: '40%'}}}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontFamily: "Quicksand, sans-serif",
-                color: "#153316",
-                
-              }}
-            >
-              Charts
-            </Typography>
-          </MenuItem>
-          <MenuItem sx={{ '&:hover':{backgroundColor: 'transparent', opacity: '40%'}}}>
-            <Typography
-              sx={{
-                fontWeight: 700,
-                fontFamily: "Quicksand, sans-serif",
-                color: "#153316",
-                
-              }}
-            >
-              Settings
-            </Typography>
-          </MenuItem>
-        </List>
-      </Drawer>
-
-      {/* Main content */}
-      <Box
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#1e1e1e", opacity: '90%', color: "#fff" }}
-      >
-        {/* Top Info */}
-        <Box
+      <Box sx={{ display: "flex", height: "80vh", marginTop: "5%" }}>
+        {/* Sidebar */}
+        <Drawer
+          variant="permanent"
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: 2,
+            width: 240,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              marginTop: "5%",
+              width: 240,
+              boxSizing: "border-box",
+              backgroundColor: "transparent", // Dark background
+              color: "#153316", // White text color
+              border: "none",
+            },
           }}
         >
-          <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
-            <CardContent sx={{color:'white'}}>
-              <Typography variant="h6">Total Budget</Typography>
-              <Typography variant="h4">€ 5,525.00</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
-            <CardContent sx={{color:'white'}}>
-              <Typography variant="h6">Month Outcome</Typography>
-              <Typography variant="h4">€ 1,230.27</Typography>
-            </CardContent>
-          </Card>
-          <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
-            <CardContent sx={{color:'white'}}>
-              <Typography variant="h6">Month Income</Typography>
-              <Typography variant="h4">€ 3,250.03</Typography>
-            </CardContent>
-          </Card>
-        </Box>
+          <List>
+            <ListItem>
+              <Typography
+                variant="h6"
+                sx={{
+                  color: "#153316",
+                  fontWeight: 700,
+                  padding: "16px 0",
+                  fontFamily: "Quicksand, sans-serif",
+                }}
+              >
+                Actions
+              </Typography>
+            </ListItem>
+            <Divider />
+            <MenuItem
+              sx={{
+                "&:hover": { backgroundColor: "transparent", opacity: "40%" },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Quicksand, sans-serif",
+                  color: "#153316",
+                }}
+              >
+                My Wallet
+              </Typography>
+            </MenuItem>
+            <MenuItem
+              onClick={handleAdd}
+              sx={{
+                "&:hover": { backgroundColor: "transparent", opacity: "40%" },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Quicksand, sans-serif",
+                  color: "#153316",
+                }}
+              >
+                Add New Expenses
+              </Typography>
+            </MenuItem>
+            <MenuItem
+              onClick={handleIncome}
+              sx={{
+                "&:hover": { backgroundColor: "transparent", opacity: "40%" },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Quicksand, sans-serif",
+                  color: "#153316",
+                }}
+              >
+                Add New Incomes
+              </Typography>
+            </MenuItem>
+            <MenuItem
+              sx={{
+                "&:hover": { backgroundColor: "transparent", opacity: "40%" },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Quicksand, sans-serif",
+                  color: "#153316",
+                }}
+              >
+                Charts
+              </Typography>
+            </MenuItem>
+            <MenuItem
+              sx={{
+                "&:hover": { backgroundColor: "transparent", opacity: "40%" },
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 700,
+                  fontFamily: "Quicksand, sans-serif",
+                  color: "#153316",
+                }}
+              >
+                Settings
+              </Typography>
+            </MenuItem>
+          </List>
+        </Drawer>
 
-        {/* Data Table */}
-        <TableContainer component={Paper} sx={{ backgroundColor: "#2c2c2c" }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: "#fff" }}>Title</TableCell>
-                <TableCell sx={{ color: "#fff" }}>Amount</TableCell>
-                <TableCell sx={{ color: "#fff" }}>Category</TableCell>
-                <TableCell sx={{ color: "#fff" }}>Date</TableCell>
-                <TableCell sx={{ color: "#fff" }}>xx</TableCell>
-                <TableCell sx={{ color: "#fff" }}>xa</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {[
-                {
-                  title: "Dinner friday",
-                  amount: "$1250.85",
-                  category: "Food",
-                  date: "10-10-2024",
-                  xx: "xx",
-                  xa: "xa",
-                },
-                {
-                  title: "Example DR",
-                  amount: "Quote",
-                  category: "2025-023",
-                  date: "To send",
-                  xx: "1 Aug 2025",
-                  xa: "€ 32,00",
-                },
-                {
-                  title: "Newly SR",
-                  amount: "Invoice",
-                  category: "2025-022",
-                  date: "Overdue",
-                  xx: "2 Jun 2025",
-                  xa: "€ 8,10",
-                },
-                {
-                  title: "KB Starter",
-                  amount: "Invoice",
-                  category: "2025-021",
-                  date: "Paid",
-                  xx: "30 Apr 2025",
-                  xa: "€ 32,00",
-                },
-                {
-                  title: "Tesla Inc.",
-                  amonut: "Quote",
-                  category: "2025-020",
-                  date: "To send",
-                  xx: "25 Jun 2025",
-                  xa: "€ 32,00",
-                },
-                {
-                  title: "Starbucks",
-                  amount: "Invoice",
-                  category: "2025-019",
-                  date: "Overdue",
-                  xx: "30 Apr 2025",
-                  xa: "€ 8,10",
-                },
-              ].map((row) => (
-                <TableRow key={row.number}>
-                  <TableCell sx={{ color: "#fff" }}>{row.title}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>{row.amount}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>{row.category}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>{row.date}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>{row.xx}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>{row.xa}</TableCell>
+        {/* Main content */}
+        <Box
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            backgroundColor: "#1e1e1e",
+            opacity: "90%",
+            color: "#fff",
+            height: "80vh",
+            overflow: "hidden",
+            marginRight: "1%",
+          }}
+        >
+          {/* Top Info */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 2,
+              maxHeight: "20%",
+            }}
+          >
+            <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
+              <CardContent sx={{ color: "white" }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 900,
+                    fontFamily: "Quicksand, sans-serif",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Total Budget
+                </Typography>
+                <Typography variant="h5">€ 5,525.00</Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
+              <CardContent sx={{ color: "white" }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 900,
+                    fontFamily: "Quicksand, sans-serif",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Month Outcome
+                </Typography>
+                <Typography variant="h5">€ 1,230.27</Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ backgroundColor: "#2c2c2c", width: "30%" }}>
+              <CardContent sx={{ color: "white" }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 900,
+                    fontFamily: "Quicksand, sans-serif",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  Month Income
+                </Typography>
+                <Typography variant="h5">€ 3,250.03</Typography>
+              </CardContent>
+            </Card>
+          </Box>
+
+          {/* Data Table */}
+          <TableContainer
+            component={Paper}
+            sx={{
+              backgroundColor: "#2c2c2c",
+              height: "calc(80vh - 25vh)",
+              overflowY: "auto",
+            }}
+          >
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    Title
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    Amount ($)
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    Category
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    Date
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    xx
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      color: "#fff",
+                      backgroundColor: "#2c2c2c",
+                      fontWeight: 900,
+                      fontFamily: "Quicksand, sans-serif",
+                      fontSize: "1.5rem",
+                    }}
+                  >
+                    xa
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {expenses.toReversed().map((expense) => (
+                  <TableRow key={expense.id}>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      {expense.title}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      $ {expense.amount}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      {expense.category}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      {expense.date}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      xx
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "#fff",
+                        fontFamily: "Quicksand, sans-serif",
+                      }}
+                    >
+                      xa
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       </Box>
-    </Box>
-    <AddDialog open={openAdd} close={() => setOpenAdd(false)}/>
+      <AddDialog
+        add={handleAdd}
+        open={openAdd}
+        close={() => setOpenAdd(false)}
+      />
+      <IncomeDialog
+        add={handleIncome}
+        open={openIncome}
+        close={() => setOpenIncome(false)}
+      />
     </>
   );
 };
