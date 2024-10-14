@@ -60,7 +60,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    "https://expensestracker-client.vercel.app"
 ]
 
 ROOT_URLCONF = 'expense_tracker_proj.urls'
