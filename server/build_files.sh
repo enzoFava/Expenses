@@ -1,4 +1,5 @@
 echo "BUILD START"
-python -m install -r requirements.txt
-python manage.py collecstatic --noinput --clear
+python3.9 -m install -r requirements.txt
+python3.9 manage.py migrate
+python3.9 manage.py collecstatic --noinput --clear
 echo "BUILD END"
