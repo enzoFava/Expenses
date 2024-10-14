@@ -10,9 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import dj_database_url
+import os
 from pathlib import Path
 from datetime import timedelta
-
+from dotenv import load_dotenv
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p8_7h^i4^4-8wb+19awx8=%n4g@#m&$^6x$s1e9+*z7!r3etzw'
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app", ".now.sh"]
 
 
 # Application definition
@@ -41,6 +44,8 @@ INSTALLED_APPS = [
     'expenses',
     'rest_framework',
     'corsheaders',
+    'dotenv',
+    'dj_database_url',
 ]
 
 MIDDLEWARE = [
@@ -87,17 +92,22 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_tracker',
-        'USER': 'postgres',
-        'PASSWORD': 'pacleinad',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True
+    )
 }
+
+# {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'expense_tracker',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pacleinad',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 AUTH_USER_MODEL = 'expenses.ExpensesUsers'
 
@@ -136,6 +146,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
+MEDIA_URLS = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -143,8 +157,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Set access token expiration
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=1),     # Set refresh token expiration
-    'ROTATE_REFRESH_TOKENS': False,                 # Set to True if you want a new refresh token on each use
-    'BLACKLIST_AFTER_ROTATION': True,               # Enable this if you use rotated refresh tokens
+    # Set access token expiration
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    # Set refresh token expiration
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=1),
+    # Set to True if you want a new refresh token on each use
+    'ROTATE_REFRESH_TOKENS': False,
+    # Enable this if you use rotated refresh tokens
+    'BLACKLIST_AFTER_ROTATION': True,
 }
