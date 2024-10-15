@@ -101,22 +101,23 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-# DATABASES = {
-#     "default": dj_database_url.config(
-#         default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True
-#     )
-# }
 
-DATABASES ={
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_tracker',
-        'USER': 'postgres',
-        'PASSWORD': 'pacleinad',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+DATABASES = {
+    "default": dj_database_url.config(
+        default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True
+    )
 }
+
+# DATABASES ={
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'expense_tracker',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pacleinad',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 AUTH_USER_MODEL = 'expenses.ExpensesUsers'
 
