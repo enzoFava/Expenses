@@ -29,7 +29,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app", ".now.sh"]
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app", ".now.sh", 'localhost', "192.168.0.157"]
 
 
 # Application definition
@@ -59,8 +59,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://expensestracker-client.vercel.app'
+]
+
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://localhost:8000',
     "https://expensestracker-client.vercel.app"
 ]
 
@@ -93,22 +101,22 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASES = {
-    "default": dj_database_url.config(
-        default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True
-    )
-}
-
-# {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'expense_tracker',
-#         'USER': 'postgres',
-#         'PASSWORD': 'pacleinad',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True
+#     )
 # }
+
+DATABASES ={
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'expense_tracker',
+        'USER': 'postgres',
+        'PASSWORD': 'pacleinad',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 AUTH_USER_MODEL = 'expenses.ExpensesUsers'
 

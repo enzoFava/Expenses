@@ -13,7 +13,7 @@ import {register} from "../../api/usersAPI"
 import { toast } from "react-toastify";
 
 
-const RegisterDialog = ({ open, close }) => {
+const RegisterDialog = ({ open, close, onLogin }) => {
   const [user, setUser] = useState({
     first_name: "",
     last_name: "",
@@ -30,10 +30,11 @@ const RegisterDialog = ({ open, close }) => {
     e.preventDefault();
     try {
       const response = await register(user)
-      const newUser = response.data.user
-      toast.success(`Welcome ${newUser.first_name.toUpperCase()}!`)
+      const newUser = response.data
+      toast.success(`Welcome ${newUser.user.first_name}!`)
       close(); ////////////////////////////////////////////////////////////////////////////////////////////
       localStorage.setItem('token', newUser.access)
+      onLogin(newUser)
     } catch (error) {
       if (error.status === 400) {
         console.error("Email already exists : "+ error)
@@ -79,7 +80,7 @@ const RegisterDialog = ({ open, close }) => {
         </IconButton>
         <DialogTitle
           sx={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "'Quicksand', sans-serif",
             fontWeight: "bold",
             fontSize: "1.5em",
             position: "relative",
@@ -97,7 +98,7 @@ const RegisterDialog = ({ open, close }) => {
             margin="normal"
             required
             InputProps={{
-              sx: { fontFamily: "'Montserrat', sans-serif" },
+              sx: { fontFamily: "'Quicksand', sans-serif" },
             }} // Custom Input styles
           />
           <TextField
@@ -108,7 +109,7 @@ const RegisterDialog = ({ open, close }) => {
             margin="normal"
             required
             InputProps={{
-              sx: { fontFamily: "'Montserrat', sans-serif" },
+              sx: { fontFamily: "'Quicksand', sans-serif" },
             }} // Custom Input styles
           />
           <TextField
@@ -119,7 +120,7 @@ const RegisterDialog = ({ open, close }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
           <TextField
             name="password"
@@ -129,14 +130,14 @@ const RegisterDialog = ({ open, close }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
             type="submit"
             sx={{
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "'Quicksand', sans-serif",
               backgroundColor: "#4caf50", // Example color for submit button
               "&:hover": {
                 backgroundColor: "#388e3c", // Hover color

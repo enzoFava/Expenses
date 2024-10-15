@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://expensestracker-server.vercel.app/'
+    baseURL: 'http://localhost:8000' // https://expensestracker-server.vercel.app/
 })
 
 export const login = (user) => api.post("/login/", user)

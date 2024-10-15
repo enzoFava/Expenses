@@ -114,7 +114,7 @@ const Contact = () => {
                       required
                       variant="standard"
                       InputProps={{
-                        sx: { fontFamily: "'Montserrat', sans-serif" },
+                        sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
                       error={error.firstName}
                       helperText={
@@ -130,7 +130,7 @@ const Contact = () => {
                       required
                       variant="standard"
                       InputProps={{
-                        sx: { fontFamily: "'Montserrat', sans-serif" },
+                        sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
                       error={error.lastName}
                       helperText={error.lastName ? "Last Name is required." : ""}
@@ -145,7 +145,7 @@ const Contact = () => {
                       required
                       variant="standard"
                       InputProps={{
-                        sx: { fontFamily: "'Montserrat', sans-serif" },
+                        sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
                       error={error.email}
                       helperText={error.email ? "Email is required." : ""}
@@ -160,7 +160,7 @@ const Contact = () => {
                       required
                       variant="standard"
                       InputProps={{
-                        sx: { fontFamily: "'Montserrat', sans-serif" },
+                        sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
                       error={error.password}
                       helperText={error.password ? "Password is required." : ""}

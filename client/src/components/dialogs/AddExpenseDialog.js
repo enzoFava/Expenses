@@ -56,8 +56,8 @@ const AddDialog = ({ open, close, add }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await addExpense(newExpense, user.user_id);
-      console.log(response.data.newExpense)
+      await addExpense(newExpense, user.user_id);
+      add();
       close()
     } catch (error) {
       console.error("ERROR ADDING EXP : " + error)
@@ -96,7 +96,7 @@ const AddDialog = ({ open, close, add }) => {
         </IconButton>
         <DialogTitle
           sx={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "'Quicksand', sans-serif",
             fontWeight: "bold",
             fontSize: "1.5em",
             position: "relative",
@@ -113,17 +113,17 @@ const AddDialog = ({ open, close, add }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
           <TextField
             name="amount"
             label="Amount"
-            type="number"
+            type="float"
             onChange={handleChange}
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
           <FormControl fullWidth>
             <InputLabel id="demo-simple-select-label">Category</InputLabel>
@@ -153,14 +153,14 @@ const AddDialog = ({ open, close, add }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>
           <Button
             type="submit"
             sx={{
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "'Quicksand', sans-serif",
               backgroundColor: "#4caf50", // Example color for submit button
               "&:hover": {
                 backgroundColor: "#388e3c", // Hover color

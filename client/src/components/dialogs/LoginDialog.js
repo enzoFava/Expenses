@@ -15,8 +15,6 @@ import { toast } from "react-toastify";
 
 const LoginDialog = ({ open, close, register, onLogin }) => {
   const [user, setUser] = useState({ email: "", password: "" });
-  const [resUser, setResUser] = useState ({})
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
@@ -26,8 +24,8 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
     e.preventDefault()
     try {
       const response = await login(user)
-      setResUser(response.data)
-      toast.success(`Welcome ${resUser.first_name.toUpperCase()}!`)
+      const resUser = response.data
+      toast.success(`Welcome ${resUser.first_name}!`)
       close(); ///////////////////////////////////////////////////////////////////////////////////
       localStorage.setItem('token', resUser.access)
       onLogin(resUser);
@@ -69,7 +67,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
         </IconButton>
         <DialogTitle
           sx={{
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: "'Quicksand', sans-serif",
             fontWeight: "bold",
             fontSize: "1.5em",
             position: "relative",
@@ -87,7 +85,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
           <TextField
             name="password"
@@ -97,11 +95,11 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Montserrat', sans-serif" } }} // Custom Input styles
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
           />
           <Typography
             variant="body2"
-            sx={{ fontFamily: "'Montserrat', sans-serif", marginTop: 2 }}
+            sx={{ fontFamily: "'Quicksand', sans-serif", marginTop: 2 }}
           >
             Don't have an account?{" "}
             <Button
@@ -126,7 +124,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
           <Button
             type="submit"
             sx={{
-              fontFamily: "'Montserrat', sans-serif",
+              fontFamily: "'Quicksand', sans-serif",
               backgroundColor: "#4caf50", // Example color for submit button
               "&:hover": {
                 backgroundColor: "#388e3c", // Hover color

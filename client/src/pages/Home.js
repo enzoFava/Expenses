@@ -19,7 +19,6 @@ const Home = ({auth, onLogin, authUser}) => {
 
 
   const handleAuth = (e) => {
-    console.log(e.target.value);
     const action = e.target.value;
 
     if (action === "login") {
@@ -149,7 +148,7 @@ const Home = ({auth, onLogin, authUser}) => {
       </Box>
       <Contact />
       <LoginDialog open={openLogin} close={() => setOpenLogin(false)} register={() => setOpenRegister(true)} auth={auth} onLogin={onLogin}/>
-      <RegisterDialog open={openRegister} close={() => setOpenRegister(false)} auth={auth}/>
+      <RegisterDialog open={openRegister} close={() => setOpenRegister(false)} auth={auth} onLogin={onLogin}/>
     </>
   );
 };
