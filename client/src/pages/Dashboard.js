@@ -66,8 +66,6 @@ const Dashboard = ({ authUser }) => {
   const [filterMonth, setFilterMonth] = useState(getCurrentDate());
   const [filterCat, setFilterCat] = useState("all");
 
-  console.log(filterMonth);
-
   ////////////////////////////////////////////////////////////////////
 
   // console.log(transactions.sort())
@@ -80,7 +78,11 @@ const Dashboard = ({ authUser }) => {
   const fetchExpenses = useCallback(async () => {
     try {
       const { data } = await getExpenses(user.user_id);
-      setExpenses(data.expenses.filter((expense) => expense.date.split('-')[1] === filterMonth.split('-')[1]));
+      setExpenses(
+        data.expenses.filter(
+          (expense) => expense.date.split("-")[1] === filterMonth.split("-")[1]
+        )
+      );
     } catch (error) {
       console.error(error);
       setExpenses([]);
@@ -90,7 +92,11 @@ const Dashboard = ({ authUser }) => {
   const fetchIncomes = useCallback(async () => {
     try {
       const { data } = await getIncomes(user.user_id);
-      setIncomes(data.incomes.filter((income) => income.date.split('-')[1] === filterMonth.split('-')[1]));
+      setIncomes(
+        data.incomes.filter(
+          (income) => income.date.split("-")[1] === filterMonth.split("-")[1]
+        )
+      );
     } catch (error) {
       console.error(error);
       setIncomes([]);
@@ -104,7 +110,7 @@ const Dashboard = ({ authUser }) => {
 
   useEffect(() => {
     // if filter historic transactions everything
-    
+
     const newTransactions = [
       ...expenses?.map((expense) => ({
         type: "exp",
@@ -216,12 +222,7 @@ const Dashboard = ({ authUser }) => {
     </>
   );
 };
-const getCurrentDate = () => {
-  const date = new Date();
-  return date.toISOString();
-};
-const current = getCurrentDate();
-const date = current.split("-")[0] + "-" + current.split("-")[1];
+
 const Sidebar = memo(
   ({
     onAddExpense,
@@ -377,90 +378,91 @@ const ExpenseTable = memo(
           {(selectedTab === "All"
             ? transactions
             : selectedTab === "Expenses"
-            ? expenses.map((expense) => ({
-                type: "exp",
-                expense,
-              }))
-            : incomes.map((income) => ({
-                type: "inc",
-                income,
-              }))
-          )
-            .reverse()
-            .slice()
-            .map((transaction) => (
-              <TableRow
-                key={
-                  transaction.type === "exp"
-                    ? transaction.expense.id
-                    : transaction.income.id
-                }
-              >
-                {["title", "amount", "category", "date"].map((key) => {
-                  const isExpense = transaction.type === "exp";
-                  const item = isExpense
-                    ? transaction.expense
-                    : transaction.income;
+            ? [...expenses]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map((expense) => ({
+                  type: "exp",
+                  expense,
+                }))
+            : [...incomes]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .map((income) => ({
+                  type: "inc",
+                  income,
+                }))
+          ).map((transaction) => (
+            <TableRow
+              key={
+                transaction.type === "exp"
+                  ? transaction.expense.id
+                  : transaction.income.id
+              }
+            >
+              {["title", "amount", "category", "date"].map((key) => {
+                const isExpense = transaction.type === "exp";
+                const item = isExpense
+                  ? transaction.expense
+                  : transaction.income;
 
-                  return (
-                    <TableCell
-                      key={key}
-                      sx={{
-                        ...styles.tableCell,
-                        color:
-                          key === "amount"
-                            ? isExpense
-                              ? "red"
-                              : "lightgreen"
-                            : "white",
-                      }}
-                    >
-                      {key === "date" ? (
-                        new Date(item.date).toISOString().split("T")[0] // Format the date correctly
-                      ) : key === "amount" ? (
-                        <span>
-                          <span
-                            style={{
-                              color: isExpense ? "red" : "lightgreen",
-                              marginRight: "4px",
-                            }}
-                          >
-                            {isExpense ? "- $" : "+ $"}
-                          </span>
-                          <span style={{ color: "white" }}>{item[key]}</span>
-                        </span>
-                      ) : (
-                        item[key]
-                      )}
-                    </TableCell>
-                  );
-                })}
-
-                <TableCell sx={styles.tableCell}>
-                  <IconButton sx={styles.editButton}>
-                    <EditNoteIcon fontSize="medium" />
-                  </IconButton>
-                </TableCell>
-                <TableCell sx={styles.tableCell}>
-                  <IconButton
-                    sx={styles.deleteButton}
-                    onClick={() =>
-                      onDelete(
-                        transaction.type === "exp"
-                          ? transaction.expense.id
-                          : transaction.income.id,
-                        transaction.type === "exp"
-                          ? transaction.expense.title
-                          : transaction.income.title,
-                        transaction.type
-                      )
-                    }
+                return (
+                  <TableCell
+                    key={key}
+                    sx={{
+                      ...styles.tableCell,
+                      color:
+                        key === "amount"
+                          ? isExpense
+                            ? "red"
+                            : "lightgreen"
+                          : "white",
+                    }}
                   >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+                    {key === "date" ? (
+                      new Date(item.date).toISOString().split("T")[0] // Format the date correctly
+                    ) : key === "amount" ? (
+                      <span>
+                        <span
+                          style={{
+                            color: isExpense ? "red" : "lightgreen",
+                            marginRight: "4px",
+                          }}
+                        >
+                          {isExpense ? "- $" : "+ $"}
+                        </span>
+                        <span style={{ color: "white" }}>{item[key]}</span>
+                      </span>
+                    ) : (
+                      item[key]
+                    )}
+                  </TableCell>
+                );
+              })}
+
+              <TableCell sx={styles.tableCell}>
+                <IconButton sx={styles.editButton}>
+                  <EditNoteIcon fontSize="medium" />
+                </IconButton>
+              </TableCell>
+              <TableCell sx={styles.tableCell}>
+                <IconButton
+                  sx={styles.deleteButton}
+                  onClick={() =>
+                    onDelete(
+                      transaction.type === "exp"
+                        ? transaction.expense.id
+                        : transaction.income.id,
+                      transaction.type === "exp"
+                        ? transaction.expense.title
+                        : transaction.income.title,
+                      transaction.type
+                    )
+                  }
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

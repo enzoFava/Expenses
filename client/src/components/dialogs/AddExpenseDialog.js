@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -14,7 +14,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
-import { addExpense } from '../../api/expensesAPI'
+import { addExpense } from "../../api/expensesAPI";
 
 const AddDialog = ({ open, close, add }) => {
   // GET TODAY DATE //
@@ -22,20 +22,31 @@ const AddDialog = ({ open, close, add }) => {
     const date = new Date();
     return date.toISOString();
   };
-  
 
-  const date = getCurrentDate();
 
   const [newExpense, setNewExpense] = useState({
     title: "",
     amount: "",
     category: "",
-    date: date,
+    date: getCurrentDate(),
   });
   const [category, setCategory] = useState("");
 
   const token = localStorage.getItem("token");
   const user = jwtDecode(token);
+
+  useEffect(() => {
+    if (open) {
+      resetDate(); // Reset the date when the dialog is opened
+    }
+  }, [open]); // Runs every time 'open' changes
+
+  const resetDate = () => {
+    setNewExpense((prev) => ({
+      ...prev,
+      date: getCurrentDate(), // New timestamp each time dialog opens
+    }));
+  };
 
   const handleCategory = (e) => {
     const selectedCat = e.target.value;
@@ -45,10 +56,26 @@ const AddDialog = ({ open, close, add }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewExpense((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    setNewExpense((prev) => {
+      // If the input being changed is "date", combine it with the original time.
+      if (name === "date") {
+        const originalTime = new Date(prev.date).toISOString().split("T")[1]; // Extract time part.
+        const combinedDateTime = new Date(
+          `${value}T${originalTime}`
+        ).toISOString();
+        return {
+          ...prev,
+          [name]: combinedDateTime,
+        };
+      }
+
+      // For other inputs, update normally.
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -56,9 +83,9 @@ const AddDialog = ({ open, close, add }) => {
     try {
       await addExpense(newExpense, user.user_id);
       add();
-      close()
+      close();
     } catch (error) {
-      console.error("ERROR ADDING EXP : " + error)
+      console.error("ERROR ADDING EXP : " + error);
     }
   };
 
@@ -146,7 +173,7 @@ const AddDialog = ({ open, close, add }) => {
             name="date"
             type="date"
             label="Select date"
-            value={newExpense.date.split('T')[0] || date.split('T')[0]}
+            value={newExpense.date.split("T")[0] || getCurrentDate().split("T")[0]}
             onChange={handleChange}
             fullWidth
             margin="normal"
