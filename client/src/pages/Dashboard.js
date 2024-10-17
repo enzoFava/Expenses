@@ -18,7 +18,14 @@ import {
   Paper,
   Divider,
   Link,
+  TextField,
+  FormControl,
+  InputLabel,
+  NativeSelect,
 } from "@mui/material";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import AddExpenseDialog from "../components/dialogs/AddExpenseDialog";
@@ -47,14 +54,25 @@ const Dashboard = ({ authUser }) => {
     id: null,
     title: "",
   });
-  const [monthBudget, setMonthBudget] = useState(0);
 
-////////////////////////////////////////////////////////////////////
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two-digit month
+    return `${year}-${month}`;
+  };
+
+  const [monthBudget, setMonthBudget] = useState(0);
+  const [filterMonth, setFilterMonth] = useState(getCurrentDate());
+  const [filterCat, setFilterCat] = useState("all");
+
+  console.log(filterMonth);
+
+  ////////////////////////////////////////////////////////////////////
 
   // console.log(transactions.sort())
 
-
-////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////
 
   const token = localStorage.getItem("token");
   const user = jwtDecode(token);
@@ -62,22 +80,22 @@ const Dashboard = ({ authUser }) => {
   const fetchExpenses = useCallback(async () => {
     try {
       const { data } = await getExpenses(user.user_id);
-      setExpenses(data.expenses);
+      setExpenses(data.expenses.filter((expense) => expense.date.split('-')[1] === filterMonth.split('-')[1]));
     } catch (error) {
       console.error(error);
-      setExpenses([])
+      setExpenses([]);
     }
-  }, [user.user_id]);
+  }, [user.user_id, filterMonth]);
 
   const fetchIncomes = useCallback(async () => {
     try {
       const { data } = await getIncomes(user.user_id);
-      setIncomes(data.incomes)
+      setIncomes(data.incomes.filter((income) => income.date.split('-')[1] === filterMonth.split('-')[1]));
     } catch (error) {
       console.error(error);
-      setIncomes([])
+      setIncomes([]);
     }
-  }, [user.user_id]);
+  }, [user.user_id, filterMonth]);
 
   useEffect(() => {
     fetchExpenses();
@@ -85,13 +103,21 @@ const Dashboard = ({ authUser }) => {
   }, [fetchExpenses, fetchIncomes]);
 
   useEffect(() => {
+    // if filter historic transactions everything
+    
     const newTransactions = [
-      ...expenses?.map((expense) => ({ type: "exp", date: expense.date, expense })),
+      ...expenses?.map((expense) => ({
+        type: "exp",
+        date: expense.date,
+        expense,
+      })),
       ...incomes?.map((income) => ({ type: "inc", date: income.date, income })),
     ];
-    newTransactions.sort((a,b) => new Date(b.date) - new Date(a.date));
+    newTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     setTransactions(newTransactions);
-  }, [expenses, incomes]);
+    // else if filter month transactions map exp + inc filter date.month = oct
+    // else *<filter would be category>* transactions map exp by selected cat in all and exp tab
+  }, [expenses, incomes, filterMonth]);
 
   useEffect(() => {
     const totalExpenses = sumAmounts(expenses);
@@ -124,12 +150,25 @@ const Dashboard = ({ authUser }) => {
   const sumAmounts = (items) =>
     items.reduce((acc, item) => acc + parseFloat(item.amount), 0);
 
+  const handleFilterCat = (e) => {
+    const cat = e.target.value;
+    setFilterCat(cat);
+  };
+
+  const handleFilterMonth = (e) => {
+    const month = e.target.value;
+    setFilterMonth(month);
+  };
+
   return (
     <>
       <Box sx={{ display: "flex", height: "80vh", marginTop: "5%" }}>
         <Sidebar
           onAddExpense={() => setOpenAdd(true)}
           onAddIncome={() => setOpenIncome(true)}
+          handleFilterCat={(e) => handleFilterCat(e)}
+          handleFilterMonth={(e) => handleFilterMonth(e)}
+          filterMonth={filterMonth}
         />
 
         <Box sx={styles.mainContent}>
@@ -177,24 +216,70 @@ const Dashboard = ({ authUser }) => {
     </>
   );
 };
+const getCurrentDate = () => {
+  const date = new Date();
+  return date.toISOString();
+};
+const current = getCurrentDate();
+const date = current.split("-")[0] + "-" + current.split("-")[1];
+const Sidebar = memo(
+  ({
+    onAddExpense,
+    onAddIncome,
+    handleFilterCat,
+    handleFilterMonth,
+    filterMonth,
+  }) => (
+    <Drawer variant="permanent" sx={styles.drawer}>
+      <List>
+        <ListItem>
+          <Typography variant="h6" sx={styles.sidebarTitle}>
+            Actions
+          </Typography>
+        </ListItem>
+        <Divider />
+        <FormControl sx={{ margin: "5%" }}>
+          <TextField
+            name="date"
+            type="month"
+            value={filterMonth || ""}
+            onChange={handleFilterMonth}
+            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
+          />
+        </FormControl>
+        <FormControl fullWidth sx={{ margin: "5%" }}>
+          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+            Filter by Category
+          </InputLabel>
+          <NativeSelect
+            onChange={handleFilterCat}
+            defaultValue={"all"}
+            inputProps={{
+              name: "Filter",
+              id: "uncontrolled-native",
+            }}
+          >
+            <option value={"all"}>All</option>
+            <option value={"transport"}>Transport</option>
+            <option value={"health"}>Health</option>
+            <option value={"food"}>Food</option>
+            <option value={"clothes"}>Clothes</option>
+            <option value={"pets"}>Pets</option>
+            <option value={"gifts"}>Gifts</option>
+            <option value={"entertainment"}>Entertainment</option>
+            <option value={"house"}>House</option>
+          </NativeSelect>
+        </FormControl>
+        <SidebarMenuItem label="My Wallet" />
+        <SidebarMenuItem label="Add New Expenses" onClick={onAddExpense} />
+        <SidebarMenuItem label="Add New Incomes" onClick={onAddIncome} />
 
-const Sidebar = memo(({ onAddExpense, onAddIncome }) => (
-  <Drawer variant="permanent" sx={styles.drawer}>
-    <List>
-      <ListItem>
-        <Typography variant="h6" sx={styles.sidebarTitle}>
-          Actions
-        </Typography>
-      </ListItem>
-      <Divider />
-      <SidebarMenuItem label="My Wallet" />
-      <SidebarMenuItem label="Add New Expenses" onClick={onAddExpense} />
-      <SidebarMenuItem label="Add New Incomes" onClick={onAddIncome} />
-      <SidebarMenuItem label="Charts" />
-      <SidebarMenuItem label="Settings" />
-    </List>
-  </Drawer>
-));
+        <SidebarMenuItem label="Charts" />
+        <SidebarMenuItem label="Settings" />
+      </List>
+    </Drawer>
+  )
+);
 
 const SidebarMenuItem = memo(({ label, onClick }) => (
   <MenuItem sx={styles.menuItem} onClick={onClick}>
