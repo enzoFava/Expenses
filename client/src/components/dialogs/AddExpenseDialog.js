@@ -20,11 +20,9 @@ const AddDialog = ({ open, close, add }) => {
   // GET TODAY DATE //
   const getCurrentDate = () => {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return date.toISOString();
   };
+  
 
   const date = getCurrentDate();
 
@@ -148,7 +146,7 @@ const AddDialog = ({ open, close, add }) => {
             name="date"
             type="date"
             label="Select date"
-            value={newExpense.date || date}
+            value={newExpense.date.split('T')[0] || date.split('T')[0]}
             onChange={handleChange}
             fullWidth
             margin="normal"

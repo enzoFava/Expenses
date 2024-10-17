@@ -89,8 +89,6 @@ def getIncomes(request, id):
     if request.method == 'GET':
         try:
             incomes = ExpensesUserDataIncome.objects.filter(user_id=id)
-            if not incomes.exists():
-                return Response({'error':'no data for the user'}, status=status.HTTP_404_NOT_FOUND)
             
             serializer = UserDataIncomeSerializer(incomes, many=True)
             return Response({'incomes': serializer.data}, status=status.HTTP_200_OK)
@@ -105,6 +103,7 @@ def addExpense(request, id):
         print(request.data)
         user = ExpensesUsers.objects.get(id=id)  # Get user by the passed 'id'
         serializer = UserDataSerializer(data=request.data, context={'user': user})  # Pass user in context
+        print(request.data)
         
         if serializer.is_valid():
             newExpense = serializer.save()  # Serializer handles instance creation
@@ -117,12 +116,20 @@ def addExpense(request, id):
 @api_view(['DELETE'])
 def deleteExpense(request, user_id, id):
     if request.method == 'DELETE':
-        expense = ExpensesUserData.objects.filter(id=id)
-        print(expense)
+        expense = ExpensesUserData.objects.filter(id=id, user_id=user_id)
         if expense.exists():
             expense.delete()
-            return Response({'message':'Deleted successfully'}, status=status.HTTP_200_OK)
-        return Response({'error':'error while deleting'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message':'Expense Deleted successfully'}, status=status.HTTP_200_OK)
+        return Response({'error':'error while deleting expense'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['DELETE'])
+def deleteIncome(request, user_id, id):
+    if request.method == 'DELETE':
+        income = ExpensesUserDataIncome.objects.filter(id=id, user_id=user_id)
+        if income.exists():
+            income.delete()
+            return Response({'message':'Income Deleted Successfully'}, status=status.HTTP_200_OK)
+        return Response({'error':'Error while deleting income'})
     
 @api_view(['PUT'])
 def editExpense(request, user_id):
@@ -155,9 +162,6 @@ def getExpenses(request, id):
     if request.method == 'GET':
         try:
             expenses = ExpensesUserData.objects.filter(user_id=id)
-            if not expenses.exists():
-                return Response({'error':'no data for the user'}, status=status.HTTP_404_NOT_FOUND)
-            
             serializer = UserDataSerializer(expenses, many=True)
             return Response({'expenses': serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
