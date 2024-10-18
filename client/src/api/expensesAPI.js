@@ -20,8 +20,8 @@ export const getIncomes = (id) => api.get(`/${parseInt(id)}/incomes/`);
 export const deleteExpense = (id, user_id) =>
   api.delete(`/${parseInt(user_id)}/delete/${parseInt(id)}/`);
 
-export const editExpense = (newExpense, user_id) =>
-  api.put(`/${parseInt(user_id)}/edit/`, newExpense);
+export const editTransaction = (updateTransaction, user_id) =>
+  api.put(`/${parseInt(user_id)}/edit/`, updateTransaction);
 
 export const deleteIncome = (id, user_id) =>
   api.delete(`/${parseInt(user_id)}/delete/income/${parseInt(id)}/`);

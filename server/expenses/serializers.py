@@ -38,6 +38,14 @@ class UserDataIncomeSerializer(serializers.ModelSerializer):
         )
         newIncome.save()
         return newIncome
+    
+    def update(self, instance, validated_data):
+        instance.user = self.context['user']
+        instance.title = validated_data.get('title', instance.title)
+        instance.amount = validated_data.get('amount', instance.amount)
+        instance.category = validated_data.get('category', instance.category)
+        instance.date = validated_data.get('date', instance.date)
+        instance.save()
 
 
 class UserDataSerializer(serializers.ModelSerializer):

@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { addIncome } from "../../api/expensesAPI";
+import { toast } from "react-toastify";
 
 const IncomeDialog = ({ open, close, add }) => {
   // GET TODAY DATE //
@@ -22,7 +23,6 @@ const IncomeDialog = ({ open, close, add }) => {
     const date = new Date();
     return date.toISOString();
   };
-
 
   const [newIncome, setNewIncome] = useState({
     title: "",
@@ -37,9 +37,9 @@ const IncomeDialog = ({ open, close, add }) => {
 
   useEffect(() => {
     if (open) {
-      setNewIncome((prev) => ({ ...prev, date: getCurrentDate()}))
+      setNewIncome((prev) => ({ ...prev, date: getCurrentDate() }));
     }
-  },[open])
+  }, [open]);
 
   const handleCategory = (e) => {
     const selectedCat = e.target.value;
@@ -70,17 +70,28 @@ const IncomeDialog = ({ open, close, add }) => {
       };
     });
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await addIncome(newIncome, user.user_id);
-      console.log(response.data.newExpense);
-      add();
-      close();
-    } catch (error) {
-      console.error("ERROR ADDING INCOME : " + error);
+    const isValidNumber = /^\d*\.?\d+$/.test(newIncome.amount);
+    if (!isValidNumber) {
+      setNewIncome((prev) => ({
+        ...prev,
+        amount: null,
+      }));
+      toast.warn("Insert numeric amount");
+    } else {
+      try {
+        const response = await addIncome(newIncome, user.user_id);
+        console.log(response.data.newExpense);
+        add();
+        close();
+      } catch (error) {
+        console.error("ERROR ADDING INCOME : " + error);
+      }
     }
   };
+
   return (
     <Dialog
       open={open}
@@ -135,7 +146,7 @@ const IncomeDialog = ({ open, close, add }) => {
           <TextField
             name="amount"
             label="Amount"
-            type="number"
+            type="float"
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -161,7 +172,9 @@ const IncomeDialog = ({ open, close, add }) => {
             name="date"
             type="date"
             label="Select date"
-            value={newIncome.date.split("T")[0] || getCurrentDate().split("T")[0]}
+            value={
+              newIncome.date.split("T")[0] || getCurrentDate().split("T")[0]
+            }
             onChange={handleChange}
             fullWidth
             margin="normal"

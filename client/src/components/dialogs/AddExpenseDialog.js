@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { addExpense } from "../../api/expensesAPI";
+import { toast } from "react-toastify";
 
 const AddDialog = ({ open, close, add }) => {
   // GET TODAY DATE //
@@ -22,7 +23,6 @@ const AddDialog = ({ open, close, add }) => {
     const date = new Date();
     return date.toISOString();
   };
-
 
   const [newExpense, setNewExpense] = useState({
     title: "",
@@ -56,9 +56,7 @@ const AddDialog = ({ open, close, add }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setNewExpense((prev) => {
-      // If the input being changed is "date", combine it with the original time.
       if (name === "date") {
         const originalTime = new Date(prev.date).toISOString().split("T")[1]; // Extract time part.
         const combinedDateTime = new Date(
@@ -70,7 +68,7 @@ const AddDialog = ({ open, close, add }) => {
         };
       }
 
-      // For other inputs, update normally.
+      // For other inputs, return the updated object.
       return {
         ...prev,
         [name]: value,
@@ -80,12 +78,21 @@ const AddDialog = ({ open, close, add }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await addExpense(newExpense, user.user_id);
-      add();
-      close();
-    } catch (error) {
-      console.error("ERROR ADDING EXP : " + error);
+    const isValidNumber = /^\d*\.?\d+$/.test(newExpense.amount);
+    if (!isValidNumber) {
+      setNewExpense((prev) => ({
+        ...prev,
+        amount: null,
+      }));
+      toast.warn("Insert numeric amount");
+    } else {
+      try {
+        await addExpense(newExpense, user.user_id);
+        add();
+        close();
+      } catch (error) {
+        console.error("ERROR ADDING EXP : " + error);
+      }
     }
   };
 
@@ -173,7 +180,9 @@ const AddDialog = ({ open, close, add }) => {
             name="date"
             type="date"
             label="Select date"
-            value={newExpense.date.split("T")[0] || getCurrentDate().split("T")[0]}
+            value={
+              newExpense.date.split("T")[0] || getCurrentDate().split("T")[0]
+            }
             onChange={handleChange}
             fullWidth
             margin="normal"

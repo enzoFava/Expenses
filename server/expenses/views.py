@@ -132,27 +132,51 @@ def deleteIncome(request, user_id, id):
         return Response({'error':'Error while deleting income'})
     
 @api_view(['PUT'])
-def editExpense(request, user_id):
+def editTransaction(request, user_id):
     if request.method == 'PUT':
         try:
             user = ExpensesUsers.objects.get(id=user_id)
         except ExpensesUsers.DoesNotExist:
             return Response({'error':'user not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        updateExpense = request.data
+        type = request.data['type']
+        request.data.pop('type')
+        updateTransaction = request.data
 
-        try:
-            expense = ExpensesUserData.objects.get(id=updateExpense['id'], user_id=user_id)
-        except ExpensesUserData.DoesNotExist:
-            return Response({'error':'expense not found'}, status=status.HTTP_404_NOT_FOUND)
+        if type == 'exp':
+            try:
+                expense = ExpensesUserData.objects.get(id=updateTransaction['id'], user_id=user_id)
+            except ExpensesUserData.DoesNotExist:
+                return Response({"error":"expense not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = UserDataSerializer(expense, data=updateTransaction, context={'user': user})
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'successfully updated':serializer.data}, status=status.HTTP_200_OK)
+            return Response({'error updating':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        elif type == 'inc':
+            try:
+                income = ExpensesUserDataIncome.objects.get(id=updateTransaction['id'], user_id=user_id)
+            except ExpensesUserDataIncome.DoesNotExist:
+                return Response({"error":"income not found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = UserDataIncomeSerializer(income, data=updateTransaction, context={'user':user})
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"succesfully updated":serializer.data}, status=status.HTTP_200_OK)
+            return Response({'error updating':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error":"invalid transaction type"}, status=status.HTTP_404_NOT_FOUND)
+            
+        # try:
+        #     expense = ExpensesUserData.objects.get(id=updateExpense['id'], user_id=user_id)
+        # except ExpensesUserData.DoesNotExist:
+        #     return Response({'error':'expense not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = UserDataSerializer(expense, data=updateExpense, context={'user': user})
+        # serializer = UserDataSerializer(expense, data=updateExpense, context={'user': user})
         
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'updated succesfully': serializer.data}, status=status.HTTP_200_OK)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response({'updated succesfully': serializer.data}, status=status.HTTP_200_OK)
         
-        return Response({'error updating':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
             
         
 

@@ -14,59 +14,88 @@ import {
   InputLabel,
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
-import { editExpense } from "../../api/expensesAPI";
+import { editTransaction } from "../../api/expensesAPI";
 import { toast } from "react-toastify";
 
-const EditDialog = ({ open, close, add, expense }) => {
+const EditDialog = ({ open, close, edit, transaction }) => {
   // GET TODAY DATE //
   const getCurrentDate = () => {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return date.toISOString();
   };
-
-  const date = getCurrentDate();
-  
-
-  const [newExpense, setNewExpense] = useState(expense || {});
-  const [category, setCategory] = useState("");
-
+  const [updateTransaction, setUpdateTransaction] = useState(
+    transaction
+      ? transaction.expense
+        ? transaction.expense
+        : transaction.income
+      : {}
+  );
+  const [category, setCategory] = useState(transaction ? (transaction.expense ? transaction.expense.category : transaction.income.category) : "");
   const token = localStorage.getItem("token");
   const user = jwtDecode(token);
 
   useEffect(() => {
-    if (expense){
-        setNewExpense({...expense, date: expense.date.split('T')[0]})
+    if (transaction) {
+      if (transaction.type === "exp") {
+        setUpdateTransaction({
+          ...transaction.expense,
+          date: transaction.expense.date,
+        });
+        setCategory(transaction.expense.category) // .split('T')[0]
+      } else {
+        setUpdateTransaction({
+          ...transaction.income,
+          date: transaction.income.date,
+        });
+        setCategory(transaction.income.category) // .split('T')[0]
+      }
     }
-  }, [expense])
-
-
+  }, [transaction]);
 
   const handleCategory = (e) => {
     const selectedCat = e.target.value;
     setCategory(selectedCat);
-    setNewExpense((prev) => ({ ...prev, category: selectedCat }));
+    setUpdateTransaction((prev) => ({ ...prev, category: selectedCat }));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewExpense((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setUpdateTransaction((prev) => {
+      if (name === "date") {
+        const originalTime = new Date(prev.date).toISOString().split("T")[1]; // Extract time part.
+        const combinedDateTime = new Date(
+          `${value}T${originalTime}`
+        ).toISOString();
+        return {
+          ...prev,
+          [name]: combinedDateTime,
+        };
+      }
+
+      // For other inputs, return the updated object.
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const transactionWithType = {
+      ...updateTransaction,
+      type: transaction?.type || "unknown",
+    };
     try {
-      await editExpense(newExpense, user.user_id);
-      add();
+      const response = await editTransaction(transactionWithType, user.user_id);
+      console.log(response.data);
+      const [fetchExpenses, fetchIncomes] = edit;
+      fetchExpenses();
+      fetchIncomes();
       close();
-      toast.success('Updated!')
+      toast.success("Updated!");
     } catch (error) {
-      console.error("ERROR ADDING EXP : " + error)
+      console.error("ERROR UPDATING EXP : " + error);
     }
   };
 
@@ -109,13 +138,13 @@ const EditDialog = ({ open, close, add, expense }) => {
             width: "80%",
           }}
         >
-          Add New Expense
+          Edit Transaction
         </DialogTitle>
         <DialogContent sx={{ marginTop: 1 }}>
           <TextField
             name="title"
             label="title"
-            value={newExpense.title || ""}
+            value={transaction ? updateTransaction.title : ""}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -125,7 +154,7 @@ const EditDialog = ({ open, close, add, expense }) => {
           <TextField
             name="amount"
             label="Amount"
-            value={newExpense.amount || ""}
+            value={transaction ? updateTransaction.amount : ""}
             type="float"
             onChange={handleChange}
             fullWidth
@@ -139,24 +168,61 @@ const EditDialog = ({ open, close, add, expense }) => {
               onChange={handleCategory}
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={newExpense.category || category}
+              value={category || ""}
               label="Category"
             >
-              <MenuItem value={"clothes"}>Clothes</MenuItem>
-              <MenuItem value={"entertainment"}>Entertainment</MenuItem>
-              <MenuItem value={"food"}>Food</MenuItem>
-              <MenuItem value={"gifts"}>Gifts</MenuItem>
-              <MenuItem value={"health"}>Health</MenuItem>
-              <MenuItem value={"house"}>House</MenuItem>
-              <MenuItem value={"pets"}>Pets</MenuItem>
-              <MenuItem value={"transport"}>Transport</MenuItem>
+              {transaction?.type === "exp"
+                ? [
+                    <MenuItem key="clothes" value="clothes">
+                      Clothes
+                    </MenuItem>,
+                    <MenuItem key="entertainment" value="entertainment">
+                      Entertainment
+                    </MenuItem>,
+                    <MenuItem key="food" value="food">
+                      Food
+                    </MenuItem>,
+                    <MenuItem key="gifts" value="gifts">
+                      Gifts
+                    </MenuItem>,
+                    <MenuItem key="health" value="health">
+                      Health
+                    </MenuItem>,
+                    <MenuItem key="house" value="house">
+                      House
+                    </MenuItem>,
+                    <MenuItem key="pets" value="pets">
+                      Pets
+                    </MenuItem>,
+                    <MenuItem key="transport" value="transport">
+                      Transport
+                    </MenuItem>,
+                  ]
+                : [
+                    <MenuItem key="salary" value="salary">
+                      Salary
+                    </MenuItem>,
+                    <MenuItem key="deposits" value="deposits">
+                      Deposits
+                    </MenuItem>,
+                    <MenuItem key="savings" value="savings">
+                      Savings
+                    </MenuItem>,
+                    <MenuItem key="others" value="others">
+                      Others
+                    </MenuItem>,
+                  ]}
             </Select>
           </FormControl>
           <TextField
             name="date"
             type="date"
             label="Select date"
-            value={newExpense.date || date}
+            value={
+              transaction && updateTransaction.date
+                ? updateTransaction.date.split("T")[0]
+                : getCurrentDate().split("T")[0]
+            }
             onChange={handleChange}
             fullWidth
             margin="normal"

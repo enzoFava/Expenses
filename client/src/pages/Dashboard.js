@@ -43,7 +43,7 @@ import { jwtDecode } from "jwt-decode";
 const Dashboard = ({ authUser }) => {
   const [openAdd, setOpenAdd] = useState(false);
   const [openIncome, setOpenIncome] = useState(false);
-  const [openEdit, setOpenEdit] = useState({ bool: false, expense: null });
+  const [openEdit, setOpenEdit] = useState({ bool: false, transaction: null });
   const [expenses, setExpenses] = useState([]);
   const [incomes, setIncomes] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -117,7 +117,11 @@ const Dashboard = ({ authUser }) => {
         date: expense.date,
         expense,
       })),
-      ...incomes?.map((income) => ({ type: "inc", date: income.date, income })),
+      ...incomes?.map((income) => ({
+        type: "inc",
+        date: income.date,
+        income,
+      })),
     ];
     newTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     setTransactions(newTransactions);
@@ -189,7 +193,7 @@ const Dashboard = ({ authUser }) => {
             transactions={transactions}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
-            onEdit={(expense) => setOpenEdit({ bool: true, expense })}
+            onEdit={(transaction) => setOpenEdit({ bool: true, transaction })}
             onDelete={(id, title, type) =>
               setOpenConfirm({ bool: true, id, title, type })
             }
@@ -210,8 +214,8 @@ const Dashboard = ({ authUser }) => {
       <EditExpenseDialog
         open={openEdit.bool}
         close={() => setOpenEdit({ bool: false })}
-        add={fetchExpenses}
-        expense={openEdit.expense}
+        edit={[fetchExpenses, fetchIncomes]}
+        transaction={openEdit.transaction}
       />
       <ConfirmDialog
         open={openConfirm.bool}
@@ -439,7 +443,10 @@ const ExpenseTable = memo(
               })}
 
               <TableCell sx={styles.tableCell}>
-                <IconButton sx={styles.editButton}>
+                <IconButton
+                  sx={styles.editButton}
+                  onClick={() => onEdit(transaction)}
+                >
                   <EditNoteIcon fontSize="medium" />
                 </IconButton>
               </TableCell>
