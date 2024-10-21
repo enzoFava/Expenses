@@ -46,6 +46,7 @@ class UserDataIncomeSerializer(serializers.ModelSerializer):
         instance.category = validated_data.get('category', instance.category)
         instance.date = validated_data.get('date', instance.date)
         instance.save()
+        return instance
 
 
 class UserDataSerializer(serializers.ModelSerializer):
