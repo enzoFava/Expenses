@@ -13,6 +13,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { getUser, updateUser } from "../api/usersAPI";
@@ -22,6 +23,7 @@ const Profile = () => {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState({ first_name: false, last_name: false });
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -89,9 +91,9 @@ const Profile = () => {
           transition: "transform 0.2s ease-in-out",
         }}
       >
-        <Card sx={{ width: "60%", height: "fit-content" }}>
+        <Card sx={{ ...styles.card, width: "60%", height: "fit-content" }}>
           <Typography
-            variant="h6"
+            variant="h5"
             sx={{
               display: "flex",
               fontFamily: "Quicksand, sans-serif",
@@ -102,15 +104,17 @@ const Profile = () => {
           >
             Personal details
             <EditIcon
-              sx={{ margin: "2%", cursor: "pointer" }}
+              sx={{ margin: "2%", cursor: "pointer", color: "lightgreen" }}
               onClick={() => setShowForm(!showForm)}
             />
           </Typography>
 
           <CardHeader
             sx={{ padding: "5%" }}
-            title={`${user.first_name} ${user.last_name} (${user.age || ""})`}
-            subheader={user.email}
+            title={`${user.first_name} ${user.last_name} ( ${user.age || ""} )`}
+            subheader={
+              <Typography sx={{ color: "white" }}>{user.email}</Typography>
+            }
             avatar={
               <Avatar
                 onClick={() => toast.success("Avatar Clicked")}
@@ -120,12 +124,21 @@ const Profile = () => {
               </Avatar>
             }
           />
+          <CardContent
+            sx={{ textAlign: "end", paddingBottom: "2% !important" }}
+          >
+            <DeleteIcon
+              sx={{ margin: "2%", cursor: "pointer", color: "red" }}
+              onClick={() => setShowConfirm(true)}
+            />
+          </CardContent>
         </Card>
       </Grid2>
       <Zoom in={showForm}>
         <Grid2 size={6} sx={{ ...styles.grid6, justifyContent: "flex-start" }}>
           <Card
             sx={{
+              ...styles.card,
               width: "60%",
               display: "flex",
               flexDirection: "column",
@@ -135,7 +148,14 @@ const Profile = () => {
           >
             <CardHeader
               sx={{ padding: "5%", marginBottom: "0%" }}
-              title={"Edit your data"}
+              title={
+                <Typography
+                  variant="h5"
+                  sx={{ fontFamily: "Quicksand, sans-serif" }}
+                >
+                  Edit your data
+                </Typography>
+              }
             />
             <CardContent>
               <FormControl>
@@ -149,9 +169,21 @@ const Profile = () => {
                   error={error.first_name}
                   helperText={error.first_name ? "First Name is required." : ""}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      color: "white",
+                      fontFamily: "'Quicksand', sans-serif",
+                    },
+                  }}
                   InputProps={{
-                    sx: { fontFamily: "'Quicksand', sans-serif" },
-                  }} // Custom Input styles
+                    sx: {
+                      fontFamily: "'Quicksand', sans-serif",
+                      color: "white",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                    },
+                  }}
                 />
                 <TextField
                   name="last_name"
@@ -163,9 +195,21 @@ const Profile = () => {
                   error={error.last_name}
                   helperText={error.last_name ? "Last Name is required." : ""}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      color: "white",
+                      fontFamily: "'Quicksand', sans-serif",
+                    },
+                  }}
                   InputProps={{
-                    sx: { fontFamily: "'Quicksand', sans-serif" },
-                  }} // Custom Input styles
+                    sx: {
+                      fontFamily: "'Quicksand', sans-serif",
+                      color: "white",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                    },
+                  }}
                 />
                 <TextField
                   name="age"
@@ -176,17 +220,33 @@ const Profile = () => {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
+                  InputLabelProps={{
+                    sx: {
+                      color: "white",
+                      fontFamily: "'Quicksand', sans-serif",
+                    },
+                  }}
                   InputProps={{
-                    sx: { fontFamily: "'Quicksand', sans-serif" },
-                  }} // Custom Input styles
+                    sx: {
+                      fontFamily: "'Quicksand', sans-serif",
+                      color: "white",
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "white",
+                      },
+                    },
+                  }}
                 />
                 <Button
                   type="submit"
                   onClick={() => handleSubmit(user)}
                   sx={{
+                    color: "black",
+                    fontWeight: "600",
                     alignSelf: "center",
                     width: "50%",
                     marginTop: "15%",
+                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+                    fontSize: "1rem",
                     fontFamily: "'Quicksand', sans-serif",
                     backgroundColor: "#4caf50",
                     "&:hover": {
@@ -195,7 +255,7 @@ const Profile = () => {
                   }}
                   variant="contained"
                 >
-                  {loading ? <CircularProgress size="25px" /> : 'Save'}
+                  {loading ? <CircularProgress size="25px" /> : "Save"}
                 </Button>
               </FormControl>
             </CardContent>
@@ -212,12 +272,21 @@ export default Profile;
 const styles = {
   grid12: {
     marginTop: "8%",
-    opacity: "80%",
+    opacity: "90%",
   },
   grid6: {
     padding: "1%",
     display: "flex",
     justifyContent: "center",
     transition: "transform 0.5s ease-in-out",
+  },
+  card: {
+    backgroundColor: "#1e1e1e",
+    color: "white",
+    fontFamily: "Quicksand, sans-serif",
+    borderRadius: '10px'
+  },
+  text: {
+    color: "white",
   },
 };
