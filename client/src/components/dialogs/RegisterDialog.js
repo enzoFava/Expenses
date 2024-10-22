@@ -8,10 +8,10 @@ import {
   DialogTitle,
   TextField,
   Zoom,
+  CircularProgress,
 } from "@mui/material";
-import {register} from "../../api/usersAPI"
+import { register } from "../../api/usersAPI";
 import { toast } from "react-toastify";
-
 
 const RegisterDialog = ({ open, close, onLogin }) => {
   const [user, setUser] = useState({
@@ -20,6 +20,7 @@ const RegisterDialog = ({ open, close, onLogin }) => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,22 +30,23 @@ const RegisterDialog = ({ open, close, onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await register(user)
-      const newUser = response.data
-      toast.success(`Welcome ${newUser.user.first_name}!`)
+      setLoading(true);
+      const response = await register(user);
+      const newUser = response.data;
+      setLoading(false);
+      toast.success(`Welcome ${newUser.user.first_name}!`);
       close(); ////////////////////////////////////////////////////////////////////////////////////////////
-      localStorage.setItem('token', newUser.access)
-      onLogin(newUser)
+      localStorage.setItem("token", newUser.access);
+      onLogin(newUser);
     } catch (error) {
+      setLoading(false);
       if (error.status === 400) {
-        console.error("Email already exists : "+ error)
-      toast.error("Email already exists. Try a different one")
+        console.error("Email already exists : " + error);
+        toast.error("Email already exists. Try a different one");
       } else {
-        console.error("Something went wrong" + error)
-        toast.error("Something went worng")
+        console.error("Something went wrong" + error);
+        toast.error("Something went worng");
       }
-      
-
     }
   };
 
@@ -145,7 +147,11 @@ const RegisterDialog = ({ open, close, onLogin }) => {
             }}
             variant="contained"
           >
-            Register
+            {loading ? (
+              <CircularProgress size="25px" color="white" />
+            ) : (
+              "Register"
+            )}
           </Button>
         </DialogActions>
       </form>

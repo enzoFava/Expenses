@@ -10,6 +10,7 @@ import {
   TextField,
   CardHeader,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { toast } from "react-toastify";
@@ -20,6 +21,7 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState({ first_name: false, last_name: false });
+  const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const Profile = () => {
       fetchUser();
     }
   }, []);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
@@ -47,7 +49,7 @@ const Profile = () => {
   };
 
   const handleSubmit = async (user) => {
-    console.log(user)
+    console.log(user);
     if (user.first_name.trim() === "") {
       setError((prevError) => ({ ...prevError, first_name: true }));
       return;
@@ -58,11 +60,14 @@ const Profile = () => {
       return;
     }
     try {
+      setLoading(true);
       const response = await updateUser(user, user.id);
       console.log(response);
+      setLoading(false);
       toast.success("Data Updated!");
       setShowForm(false);
     } catch (error) {
+      setLoading(false);
       console.error(error);
     }
   };
@@ -190,7 +195,7 @@ const Profile = () => {
                   }}
                   variant="contained"
                 >
-                  Save
+                  {loading ? <CircularProgress size="25px" /> : 'Save'}
                 </Button>
               </FormControl>
             </CardContent>

@@ -118,8 +118,6 @@ const Dashboard = ({ authUser }) => {
     ];
     newTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     setTransactions(newTransactions);
-    // else if filter month transactions map exp + inc filter date.month = oct
-    // else *<filter would be category>* transactions map exp by selected cat in all and exp tab
   }, [expenses, incomes, filterMonth, filterCat]);
 
   useEffect(() => {

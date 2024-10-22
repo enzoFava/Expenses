@@ -9,33 +9,37 @@ import {
   TextField,
   Typography,
   Zoom,
+  CircularProgress,
 } from "@mui/material";
-import { login } from "../../api/usersAPI"
+import { login } from "../../api/usersAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
 
 const LoginDialog = ({ open, close, register, onLogin }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await login(user)
-      const resUser = response.data
-      toast.success(`Welcome ${resUser.first_name}!`)
+      setLoading(true)
+      const response = await login(user);
+      const resUser = response.data;
+      setLoading(false)
+      toast.success(`Welcome ${resUser.first_name}!`);
       close(); ///////////////////////////////////////////////////////////////////////////////////
-      localStorage.setItem('token', resUser.access)
+      localStorage.setItem("token", resUser.access);
       onLogin(resUser);
-      navigate('/dashboard')
+      navigate("/dashboard");
     } catch (error) {
-      console.error(error)
-      toast.error("Incorrect email or password")
+      console.error(error);
+      toast.error("Incorrect email or password");
     }
   };
 
@@ -136,7 +140,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             }}
             variant="contained"
           >
-            Log In
+            {loading ? <CircularProgress size='25px' color='white'/> : 'Log In'}
           </Button>
         </DialogActions>
       </form>

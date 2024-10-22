@@ -4,7 +4,6 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -77,7 +76,6 @@ function App() {
           }
         />
         <Route path="/profile" element={<Profile auth={authUser} />} />
-        <Route path="/settings" element={<Settings auth={authUser} />} />
       </Route>
     )
   );

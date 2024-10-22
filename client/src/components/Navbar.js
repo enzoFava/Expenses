@@ -18,7 +18,7 @@ import { jwtDecode } from "jwt-decode";
 import { getUser } from "../api/usersAPI";
 
 const pages = ["Contact", "Dashboard"];
-const settings = ["Profile", "Settings", "Dashboard", "Logout"];
+const settings = ["Profile", "Dashboard", "Logout"];
 
 function Navbar({ auth, onLogout }) {
   const navigate = useNavigate();
@@ -26,22 +26,23 @@ function Navbar({ auth, onLogout }) {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [scrollToContact, setScrollToContact] = useState(false);
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem("token");
       if (token) {
-        const user = jwtDecode(token)
-        const id = user.user_id
-        const response = await getUser(id)
+        const user = jwtDecode(token);
+        const id = user.user_id;
+        const response = await getUser(id);
         if (response.data) {
-          setUser(response.data.user)
+          setUser(response.data.user);
         }
       }
-    }
+    };
     fetchUser();
-  },[auth])
+  }, [auth]);
+
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -102,10 +103,6 @@ function Navbar({ auth, onLogout }) {
 
     if (setting === "Profile" && auth) {
       navigate("/profile");
-    }
-
-    if (setting == 'Settings' && auth) {
-      navigate("/settings");
     }
   };
   return (
@@ -221,7 +218,7 @@ function Navbar({ auth, onLogout }) {
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar>{user.first_name[0]}</Avatar>
+                      <Avatar>{user.first_name ? user.first_name[0] : "U"}</Avatar>
                     </IconButton>
                   </Tooltip>
                   <Menu
