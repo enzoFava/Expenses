@@ -14,6 +14,7 @@ class ExpensesUsers(AbstractUser):
     Model representing a user who can track expenses.
     """
     email = models.EmailField(unique=True)
+    age = models.IntegerField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']

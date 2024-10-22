@@ -214,18 +214,18 @@ const Dashboard = ({ authUser }) => {
 const InfoCards = memo(({ monthBudget, totalExpenses, totalIncomes }) => (
   <Box sx={styles.infoCardsContainer}>
     <InfoCard
-      title="Month Budget"
+      title="Total Budget"
       value={monthBudget}
       isNegative={monthBudget < 0}
     />
-    <InfoCard title="Month Outcome" value={totalExpenses} />
-    <InfoCard title="Month Income" value={totalIncomes} />
+    <InfoCard title="Total Outcome" value={totalExpenses} />
+    <InfoCard sx={{ textAlign: 'center'}} title="Total Income" value={totalIncomes} />
   </Box>
 ));
 
 const InfoCard = memo(({ title, value, isNegative }) => (
   <Card sx={styles.infoCard}>
-    <CardContent>
+    <CardContent sx={{textAlign: 'center'}}>
       <Typography variant="h6" sx={styles.cardTitle}>
         {title}
       </Typography>

@@ -11,6 +11,7 @@ import {
   InputLabel,
   NativeSelect,
 } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add'
 
 const Sidebar = ({
   onAddExpense,
@@ -23,6 +24,8 @@ const Sidebar = ({
   const SidebarMenuItem = memo(({ label, onClick }) => (
     <MenuItem sx={styles.menuItem} onClick={onClick}>
       <Typography sx={styles.menuItemText}>{label}</Typography>
+      {label === 'Add New Expenses' && <AddIcon/>}
+      {label === 'Add New Incomes' && <AddIcon/>}
     </MenuItem>
   ));
 
@@ -35,6 +38,9 @@ const Sidebar = ({
           </Typography>
         </ListItem>
         <Divider />
+        <InputLabel sx={{ marginLeft: '5%', marginTop: '3%', fontSize: '0.75rem', fontFamily: 'Quicksand, sans-serif'}}>
+            Filter by Month
+        </InputLabel>
         <FormControl sx={{ margin: "5%" }}>
           <TextField
             name="date"
@@ -45,7 +51,7 @@ const Sidebar = ({
           />
         </FormControl>
         <FormControl fullWidth sx={{ margin: "5%" }}>
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">
+          <InputLabel variant="standard" htmlFor="uncontrolled-native" sx={{fontFamily: 'Quicksand, sans-serif'}}>
             Filter by Category
           </InputLabel>
           <NativeSelect
@@ -71,12 +77,10 @@ const Sidebar = ({
             <option value={"others"}>Others</option>
           </NativeSelect>
         </FormControl>
-        <SidebarMenuItem label="My Wallet" />
         <SidebarMenuItem label="Add New Expenses" onClick={onAddExpense} />
         <SidebarMenuItem label="Add New Incomes" onClick={onAddIncome} />
 
         <SidebarMenuItem label="Charts" />
-        <SidebarMenuItem label="Settings" />
       </List>
     </Drawer>
   );

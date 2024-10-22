@@ -12,8 +12,11 @@ import {
 } from "@mui/material";
 import { login } from "../../api/usersAPI"
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const LoginDialog = ({ open, close, register, onLogin }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,6 +32,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
       close(); ///////////////////////////////////////////////////////////////////////////////////
       localStorage.setItem('token', resUser.access)
       onLogin(resUser);
+      navigate('/dashboard')
     } catch (error) {
       console.error(error)
       toast.error("Incorrect email or password")

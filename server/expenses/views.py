@@ -71,6 +71,37 @@ def login(request):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
+@api_view(['GET'])
+def getUser(request, id):
+    if request.method == 'GET':
+        try:
+            user = ExpensesUsers.objects.get(id=id)
+            serializer = UserSerializer(user)
+            return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+        except ExpensesUsers.DoesNotExist:
+            return Response({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['PUT'])
+def updateUser(request, id):
+    if request.method == 'PUT':
+        try:
+            user = ExpensesUsers.objects.get(id=id)
+            updateUser = {
+                'first_name': request.data.get('first_name', user.first_name),
+                'last_name': request.data.get('last_name', user.last_name),
+                'age': request.data.get('age', user.age),
+                'email': user.email  
+            }
+            serializer = UserSerializer(
+                user, data=updateUser)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'successfully updated': serializer.data}, status=status.HTTP_200_OK)
+            return Response({'error updating': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['POST'])
 def addIncome(request, id):
     if request.method == 'POST':

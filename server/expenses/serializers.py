@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import ExpensesUserData, ExpensesUsers, ExpensesUserDataIncome
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpensesUsers
-        fields = ['id', 'email', 'first_name', 'last_name', 'password']
+        fields = ['id', 'email', 'first_name', 'last_name', 'password', 'age']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True, 'required': False}
         }
 
     def create(self, validated_data):
@@ -14,13 +15,24 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             email=validated_data['email'],
-            username=validated_data['email']
+            username=validated_data['email'],
+            age=validated_data['age']
         )
-
         user.set_password(validated_data['password'])
         user.save()
         return user
-    
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get(
+            'first_name', instance.first_name)
+        instance.last_name = validated_data.get(
+            'last_name', instance.last_name)
+        instance.age = validated_data.get('age', instance.age)
+
+        instance.save()
+        return instance
+
+
 class UserDataIncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpensesUserDataIncome
@@ -38,7 +50,7 @@ class UserDataIncomeSerializer(serializers.ModelSerializer):
         )
         newIncome.save()
         return newIncome
-    
+
     def update(self, instance, validated_data):
         instance.user = self.context['user']
         instance.title = validated_data.get('title', instance.title)
@@ -67,7 +79,7 @@ class UserDataSerializer(serializers.ModelSerializer):
         )
         newExpense.save()
         return newExpense
-    
+
     def update(self, instance, validated_data):
         instance.user = self.context['user']
         instance.title = validated_data.get('title', instance.title)
@@ -76,4 +88,3 @@ class UserDataSerializer(serializers.ModelSerializer):
         instance.date = validated_data.get('date', instance.date)
         instance.save()
         return instance
-        

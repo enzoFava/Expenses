@@ -21,4 +21,6 @@ urlpatterns = [
     path("<int:user_id>/delete/<int:id>/", views.deleteExpense, name="deleteExpense"),
     path("<int:user_id>/edit/", views.editTransaction, name='editTransaction'),
     path("<int:user_id>/delete/income/<int:id>/", views.deleteIncome, name='deleteIncome'),
+    path("user/<int:id>/", views.getUser, name='getUser'),
+    path("user/<int:id>/update/", views.updateUser, name='updateUser'),
 ]

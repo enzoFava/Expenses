@@ -9,3 +9,5 @@ const api = axios.create({
 
 export const login = (user) => api.post("/login/", user);
 export const register = (user) => api.post("/register/", user);
+export const getUser = (id) => api.get(`/user/${id}/`);
+export const updateUser = (user, id) => api.put(`/user/${id}/update/`, user)
