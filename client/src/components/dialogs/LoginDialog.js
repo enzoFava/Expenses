@@ -38,8 +38,9 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
       onLogin(resUser);
       navigate("/dashboard");
     } catch (error) {
+      setLoading(false)
       console.error(error);
-      toast.error("Incorrect email or password");
+      toast.warn("Incorrect email or password");
     }
   };
 

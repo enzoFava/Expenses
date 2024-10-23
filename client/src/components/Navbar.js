@@ -218,7 +218,7 @@ function Navbar({ auth, onLogout }) {
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar>{user.first_name ? user.first_name[0] : "U"}</Avatar>
+                      <Avatar>{user.first_name ? user.first_name[0].toUpperCase() : "U"}</Avatar>
                     </IconButton>
                   </Tooltip>
                   <Menu

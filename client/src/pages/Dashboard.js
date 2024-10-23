@@ -28,6 +28,7 @@ import {
 } from "../api/expensesAPI";
 import Sidebar from "../components/Sidebar";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 const Dashboard = ({ authUser }) => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -130,6 +131,8 @@ const Dashboard = ({ authUser }) => {
     if (object.type === "exp") {
       try {
         const response = await deleteExpense(object.id, user.user_id);
+        setOpenConfirm(false)
+        toast.error('Expense deleted')
         if (response.status === 200) {
           fetchExpenses();
         }
@@ -139,11 +142,14 @@ const Dashboard = ({ authUser }) => {
     } else {
       try {
         const response = await deleteIncome(object.id, user.user_id);
+        setOpenConfirm(false)
+        toast.error('Income deleted')
         if (response.status === 200) {
           fetchIncomes();
         }
       } catch (error) {
         console.error(error);
+        toast.warn('Error deleting')
       }
     }
   };
@@ -272,7 +278,7 @@ const ExpenseTable = memo(
                     width: "100%",
                     height: "100%",
                     "&:hover": {
-                      backgroundColor: "#153316",
+                      backgroundColor: "#275b29",
                       color: "white",
                     },
                   }}
@@ -429,8 +435,8 @@ const styles = {
     fontFamily: "Quicksand, sans-serif",
   },
   tableCell: { color: "#fff", fontFamily: "Quicksand, sans-serif" },
-  editButton: { color: "lightgreen" },
-  deleteButton: { color: "red" },
+  editButton: { color: "lightgreen", '&:hover': {color: 'green'} },
+  deleteButton: { color: "red", '&:hover': {color: 'rgb(142, 20, 20)'} },
 };
 
 export default Dashboard;

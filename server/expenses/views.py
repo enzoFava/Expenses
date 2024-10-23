@@ -81,6 +81,7 @@ def getUser(request, id):
         except ExpensesUsers.DoesNotExist:
             return Response({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['PUT'])
 def updateUser(request, id):
     if request.method == 'PUT':
@@ -90,7 +91,7 @@ def updateUser(request, id):
                 'first_name': request.data.get('first_name', user.first_name),
                 'last_name': request.data.get('last_name', user.last_name),
                 'age': request.data.get('age', user.age),
-                'email': user.email  
+                'email': user.email
             }
             serializer = UserSerializer(
                 user, data=updateUser)
@@ -100,6 +101,26 @@ def updateUser(request, id):
             return Response({'error updating': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+def deleteUser(request, id):
+    if request.method == 'POST':
+        email = request.data.get('email')
+        password = request.data.get('password')
+        print("THIS IS FRONT PASSWORD", password)
+        try:
+            checkUser = ExpensesUsers.objects.get(id=id)
+            if checkUser:
+                user = authenticate(request, username=email, password=password)
+                print("THIS IS CHECK USER", user)
+                if user is not None:
+                    user.delete()
+                    return Response({'message': 'user deleted'}, status=status.HTTP_200_OK)
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        except ExpensesUsers.DoesNotExist:
+            return Response({'error':'user not found'}, status=status.HTTP_404_NOT_FOUND)
+        
 
 
 @api_view(['POST'])

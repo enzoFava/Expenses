@@ -75,7 +75,7 @@ function App() {
             )
           }
         />
-        <Route path="/profile" element={<Profile auth={authUser} />} />
+        <Route path="/profile" element={<Profile auth={authUser} onLogout={handleLogout} />} />
       </Route>
     )
   );

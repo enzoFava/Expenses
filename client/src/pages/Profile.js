@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Grid2,
   Card,
@@ -8,17 +9,21 @@ import {
   FormControl,
   Zoom,
   TextField,
+  Container,
   CardHeader,
   Button,
   CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
+import ConfirmDialog from "../components/dialogs/ConfirmDialog";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import { getUser, updateUser } from "../api/usersAPI";
+import { getUser, updateUser, deleteUser } from "../api/usersAPI";
 
-const Profile = () => {
+const Profile = ({ onLogout }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState({ first_name: false, last_name: false });
@@ -51,7 +56,6 @@ const Profile = () => {
   };
 
   const handleSubmit = async (user) => {
-    console.log(user);
     if (user.first_name.trim() === "") {
       setError((prevError) => ({ ...prevError, first_name: true }));
       return;
@@ -63,14 +67,38 @@ const Profile = () => {
     }
     try {
       setLoading(true);
-      const response = await updateUser(user, user.id);
-      console.log(response);
+      await updateUser(user, user.id);
       setLoading(false);
       toast.success("Data Updated!");
       setShowForm(false);
     } catch (error) {
       setLoading(false);
       console.error(error);
+    }
+  };
+
+  const handleDelete = async (password) => {
+    try {
+      setLoading(true)
+      await deleteUser(password.password, user.email, user.id);
+      localStorage.removeItem("token");
+      toast.error("User deleted");
+      setLoading(false)
+      setShowConfirm(false)
+      navigate("/");
+      onLogout();
+    } catch (error) {
+      console.error(error);
+      if (error.status === 401) {
+        setLoading(false)
+        toast.warn("Invalid credentials");
+      } else if (error.status === 400) {
+        setLoading(false)
+        toast.warn("User not found");
+      } else {
+        setLoading(false)
+        toast.warn("Server error");
+      }
     }
   };
 
@@ -104,7 +132,12 @@ const Profile = () => {
           >
             Personal details
             <EditIcon
-              sx={{ margin: "2%", cursor: "pointer", color: "lightgreen" }}
+              sx={{
+                margin: "2%",
+                cursor: "pointer",
+                color: "lightgreen",
+                "&:hover": { color: "green" },
+              }}
               onClick={() => setShowForm(!showForm)}
             />
           </Typography>
@@ -120,15 +153,29 @@ const Profile = () => {
                 onClick={() => toast.success("Avatar Clicked")}
                 sx={{ width: 86, height: 86, cursor: "pointer" }}
               >
-                {user.first_name?.[0] || "E"}
+                {user.first_name?.[0].toUpperCase() || "E"}
               </Avatar>
             }
           />
           <CardContent
-            sx={{ textAlign: "end", paddingBottom: "2% !important" }}
+            sx={{
+              textAlign: "end",
+              paddingBottom: "2% !important",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
           >
+            <Typography sx={{ color: "rgb(73, 71, 71)" }}>
+              Delete account
+            </Typography>
             <DeleteIcon
-              sx={{ margin: "2%", cursor: "pointer", color: "red" }}
+              sx={{
+                margin: "2%",
+                cursor: "pointer",
+                color: "rgb(73, 71, 71)",
+                "&:hover": { color: "lightgrey" },
+              }}
               onClick={() => setShowConfirm(true)}
             />
           </CardContent>
@@ -146,18 +193,35 @@ const Profile = () => {
               justifyContent: "center",
             }}
           >
+            <Typography
+              variant="h5"
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                fontFamily: "Quicksand, sans-serif",
+                justifyContent: "space-between",
+                padding: "5%",
+                paddingBottom: "0%",
+                alignItems: "center",
+                width: "90%",
+                paddingRight: "0%",
+              }}
+            >
+              Edit your data
+              <CloseIcon
+                onClick={() => setShowForm(false)}
+                sx={{ cursor: "pointer", "&:hover": { color: "darkgrey" } }}
+              />
+            </Typography>
+
             <CardHeader
               sx={{ padding: "5%", marginBottom: "0%" }}
               title={
-                <Typography
-                  variant="h5"
-                  sx={{ fontFamily: "Quicksand, sans-serif" }}
-                >
-                  Edit your data
-                </Typography>
+                <Typography sx={{ color: "white" }}>{user.email}</Typography>
               }
             />
-            <CardContent>
+
+            <CardContent sx={{ paddingTop: "0%" }}>
               <FormControl>
                 <TextField
                   name="first_name"
@@ -262,6 +326,14 @@ const Profile = () => {
           </Card>
         </Grid2>
       </Zoom>
+      <ConfirmDialog
+        open={showConfirm}
+        closeDialog={() => setShowConfirm(false)}
+        title={user.email}
+        deleteFunction={(password) => handleDelete(password)}
+        user={user}
+        loading={loading}
+      />
     </Grid2>
   );
 };
@@ -284,7 +356,7 @@ const styles = {
     backgroundColor: "#1e1e1e",
     color: "white",
     fontFamily: "Quicksand, sans-serif",
-    borderRadius: '10px'
+    borderRadius: "10px",
   },
   text: {
     color: "white",
