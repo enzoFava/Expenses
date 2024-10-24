@@ -219,11 +219,11 @@ const InfoCards = memo(({ monthBudget, totalExpenses, totalIncomes }) => (
   <Box sx={styles.infoCardsContainer}>
     <InfoCard
       title="Total Budget"
-      value={monthBudget}
+      value={monthBudget.toFixed(2)}
       isNegative={monthBudget < 0}
     />
-    <InfoCard title="Total Outcome" value={totalExpenses} />
-    <InfoCard sx={{ textAlign: 'center'}} title="Total Income" value={totalIncomes} />
+    <InfoCard title="Total Outcome" value={totalExpenses.toFixed(2)} />
+    <InfoCard sx={{ textAlign: 'center'}} title="Total Income" value={totalIncomes.toFixed(2)} />
   </Box>
 ));
 
