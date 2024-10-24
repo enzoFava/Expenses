@@ -10,7 +10,10 @@ import {
   Typography,
   Zoom,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { login } from "../../api/usersAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +22,7 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,17 +32,17 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await login(user);
       const resUser = response.data;
-      setLoading(false)
+      setLoading(false);
       toast.success(`Welcome ${resUser.first_name}!`);
       close(); ///////////////////////////////////////////////////////////////////////////////////
       localStorage.setItem("token", resUser.access);
       onLogin(resUser);
       navigate("/dashboard");
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.error(error);
       toast.warn("Incorrect email or password");
     }
@@ -99,12 +103,25 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
           <TextField
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             onChange={handleChange}
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
+            InputProps={{
+              sx: { fontFamily: "'Quicksand', sans-serif" },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    onMouseDown={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }} // Custom Input styles
           />
           <Typography
             variant="body2"
@@ -141,7 +158,11 @@ const LoginDialog = ({ open, close, register, onLogin }) => {
             }}
             variant="contained"
           >
-            {loading ? <CircularProgress size='25px' color='white'/> : 'Log In'}
+            {loading ? (
+              <CircularProgress size="25px" color="white" />
+            ) : (
+              "Log In"
+            )}
           </Button>
         </DialogActions>
       </form>

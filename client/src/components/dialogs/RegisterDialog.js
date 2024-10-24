@@ -9,7 +9,10 @@ import {
   TextField,
   Zoom,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { register } from "../../api/usersAPI";
 import { toast } from "react-toastify";
 
@@ -21,6 +24,7 @@ const RegisterDialog = ({ open, close, onLogin }) => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -127,12 +131,25 @@ const RegisterDialog = ({ open, close, onLogin }) => {
           <TextField
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             onChange={handleChange}
             fullWidth
             margin="normal"
             required
-            InputProps={{ sx: { fontFamily: "'Quicksand', sans-serif" } }} // Custom Input styles
+            InputProps={{
+              sx: { fontFamily: "'Quicksand', sans-serif" },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    onMouseDown={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }} // Custom Input styles
           />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "flex-end", padding: "16px" }}>

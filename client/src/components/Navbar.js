@@ -17,7 +17,7 @@ import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { getUser } from "../api/usersAPI";
 
-const pages = ["Contact", "Dashboard"];
+const pages = ["Home", "Contact", "Dashboard", "Analytics"];
 const settings = ["Profile", "Dashboard", "Logout"];
 
 function Navbar({ auth, onLogout }) {
@@ -42,7 +42,6 @@ function Navbar({ auth, onLogout }) {
     };
     fetchUser();
   }, [auth]);
-
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -69,6 +68,16 @@ function Navbar({ auth, onLogout }) {
       navigate("/dashboard");
       if (!auth) {
         toast.warn("Login first");
+      }
+    }
+    if (action === "H") {
+      navigate("/home");
+    }
+    if (action === "A") {
+      if (!auth) {
+        toast.warn("Login first");
+      } else {
+        navigate("/charts");
       }
     }
   };
@@ -218,7 +227,11 @@ function Navbar({ auth, onLogout }) {
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar>{user.first_name ? user.first_name[0].toUpperCase() : "U"}</Avatar>
+                      <Avatar>
+                        {user.first_name
+                          ? user.first_name[0].toUpperCase()
+                          : "U"}
+                      </Avatar>
                     </IconButton>
                   </Tooltip>
                   <Menu

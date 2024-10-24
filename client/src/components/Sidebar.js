@@ -12,6 +12,7 @@ import {
   NativeSelect,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add'
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({
   onAddExpense,
@@ -29,6 +30,8 @@ const Sidebar = ({
     </MenuItem>
   ));
 
+  const navigate = useNavigate();
+
   return (
     <Drawer variant="permanent" sx={styles.drawer}>
       <List>
@@ -38,8 +41,10 @@ const Sidebar = ({
           </Typography>
         </ListItem>
         <Divider />
-        <InputLabel sx={{ marginLeft: '5%', marginTop: '3%', fontSize: '0.75rem', fontFamily: 'Quicksand, sans-serif'}}>
+        <InputLabel variant="standard" sx={{ marginLeft: '5%', marginTop: '3%', fontFamily: 'Quicksand, sans-serif'}}>
+        <Typography  sx={{ color: '#153316' , fontWeight: 500, fontSize: '0.75rem'}}>
             Filter by Month
+          </Typography>
         </InputLabel>
         <FormControl sx={{ margin: "5%" }}>
           <TextField
@@ -52,7 +57,9 @@ const Sidebar = ({
         </FormControl>
         <FormControl fullWidth sx={{ margin: "5%" }}>
           <InputLabel variant="standard" htmlFor="uncontrolled-native" sx={{fontFamily: 'Quicksand, sans-serif'}}>
-            Filter by Category
+          <Typography  sx={{ color: '#153316' , fontWeight: 500}}>
+            Filter by category
+          </Typography>
           </InputLabel>
           <NativeSelect
             value={filterCat || ""}
@@ -80,7 +87,7 @@ const Sidebar = ({
         <SidebarMenuItem label="Add New Expenses" onClick={onAddExpense} />
         <SidebarMenuItem label="Add New Incomes" onClick={onAddIncome} />
 
-        <SidebarMenuItem label="Charts" />
+        <SidebarMenuItem label="Charts" onClick={() => navigate('/charts')}/>
       </List>
     </Drawer>
   );

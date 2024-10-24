@@ -9,7 +9,6 @@ import {
   FormControl,
   Zoom,
   TextField,
-  Container,
   CardHeader,
   Button,
   CircularProgress,
@@ -82,7 +81,7 @@ const Profile = ({ onLogout }) => {
       setLoading(true)
       await deleteUser(password.password, user.email, user.id);
       localStorage.removeItem("token");
-      toast.error("User deleted");
+      toast.error("Account deleted");
       setLoading(false)
       setShowConfirm(false)
       navigate("/");

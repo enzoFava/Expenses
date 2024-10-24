@@ -7,19 +7,28 @@ import {
   IconButton,
   Typography,
   TextField,
-  Zoom,
   CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import React, { forwardRef, useState } from "react";
-import { toast } from "react-toastify";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Fade ref={ref} {...props} />;
 });
 
-function ConfirmDialog({ open, closeDialog, title, deleteFunction, user, loading }) {
+function ConfirmDialog({
+  open,
+  closeDialog,
+  title,
+  deleteFunction,
+  user,
+  loading,
+}) {
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const password = e.target.value;
@@ -83,7 +92,7 @@ function ConfirmDialog({ open, closeDialog, title, deleteFunction, user, loading
             {user && (
               <TextField
                 required
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label="Enter your password"
                 variant="outlined"
                 onChange={(e) => handleChange(e)}
@@ -100,6 +109,17 @@ function ConfirmDialog({ open, closeDialog, title, deleteFunction, user, loading
                       transition: "background-color 5000s ease-in-out 0s", // Avoid flicker
                     },
                   },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        onMouseDown={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
                   inputProps: {
                     style: {
                       height: "100%",
@@ -158,7 +178,11 @@ function ConfirmDialog({ open, closeDialog, title, deleteFunction, user, loading
               variant="contained"
               color="error"
             >
-              {loading ? <CircularProgress size='25px' color='white'/> : 'Delete'}
+              {loading ? (
+                <CircularProgress size="25px" color="white" />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </Grid>
         </Grid>

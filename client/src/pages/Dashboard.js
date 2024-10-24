@@ -409,6 +409,8 @@ const styles = {
     height: "80vh",
     overflow: "hidden",
     marginRight: "1%",
+    borderRadius: '10px',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
   },
   infoCardsContainer: {
     display: "flex",
@@ -416,7 +418,7 @@ const styles = {
     marginBottom: 2,
     maxHeight: "20%",
   },
-  infoCard: { backgroundColor: "#2c2c2c", width: "30%", color: "white" },
+  infoCard: { backgroundColor: "#2c2c2c", width: "30%", color: "white", borderRadius:'10px' },
   cardTitle: {
     fontWeight: 900,
     fontFamily: "Quicksand, sans-serif",

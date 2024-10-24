@@ -4,6 +4,7 @@ import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Charts from "./pages/Charts";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -76,6 +77,7 @@ function App() {
           }
         />
         <Route path="/profile" element={<Profile auth={authUser} onLogout={handleLogout} />} />
+        <Route path='/charts' element={ <Charts />} />
       </Route>
     )
   );
