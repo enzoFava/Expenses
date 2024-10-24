@@ -94,6 +94,9 @@ const Profile = ({ onLogout }) => {
       } else if (error.status === 400) {
         setLoading(false)
         toast.warn("User not found");
+      } else if (error.status === 403) {
+        setLoading(false)
+        toast.warn("Cant delete Test user")
       } else {
         setLoading(false)
         toast.warn("Server error");

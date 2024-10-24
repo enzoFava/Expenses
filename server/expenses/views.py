@@ -107,8 +107,9 @@ def updateUser(request, id):
 def deleteUser(request, id):
     if request.method == 'POST':
         email = request.data.get('email')
+        if email == 'test@test.com':
+            return Response({'error':'cant delete test user.'}, status=status.HTTP_403_FORBIDDEN)
         password = request.data.get('password')
-        print("THIS IS FRONT PASSWORD", password)
         try:
             checkUser = ExpensesUsers.objects.get(id=id)
             if checkUser:
