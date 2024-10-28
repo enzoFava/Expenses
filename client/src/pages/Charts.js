@@ -104,6 +104,7 @@ const Charts = () => {
     onload();
   }, [user]);
 
+
   const getMonthlySum = (data, month) => {
     if (!Array.isArray(data)) return 0;
     return data
@@ -131,6 +132,9 @@ const Charts = () => {
 
     return monthlyTotals;
   };
+
+
+  const budget = (getMonthlyTotals(incomes).reduce((partialSum, a) => partialSum + a, 0) - getMonthlyTotals(outcomes).reduce((partialSum, a) => partialSum + a, 0))
 
 
   return (
@@ -163,7 +167,7 @@ const Charts = () => {
                   fontWeight: "900",
                 }}
               >
-                Revenue:
+                Yearly Budget: {budget}
               </Typography>
             }
           />

@@ -13,6 +13,7 @@ import {
   TableRow,
   Paper,
   Link,
+  useMediaQuery
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -44,7 +45,6 @@ const Dashboard = ({ authUser }) => {
     id: null,
     title: "",
   });
-
   
   const getCurrentDate = () => {
     const date = new Date();

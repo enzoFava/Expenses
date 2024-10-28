@@ -16,7 +16,12 @@ const Contact = () => {
     firstName: "",
     lastName: "",
   });
-  const [error, setError] = useState({ firstName: false, lastName: false, email: false, password: false });
+  const [error, setError] = useState({
+    firstName: false,
+    lastName: false,
+    email: false,
+    password: false,
+  });
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -27,7 +32,7 @@ const Contact = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (formData.firstName.trim() === "") {
       setError((prevError) => ({ ...prevError, firstName: true }));
       return;
@@ -62,9 +67,11 @@ const Contact = () => {
         }}
       >
         <Grid2 container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid2 size={12} sx={{display:'flex'}}>
+          <Grid2 size={12} sx={{ display: "flex" }}>
             <Container
-              sx={{
+              sx={
+                isMobile ? {...responsiveStyle.container} :
+                {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -73,7 +80,7 @@ const Contact = () => {
               }}
             >
               <Typography
-                variant="h2"
+                variant= {isMobile ? 'h3' : "h2"}
                 sx={{
                   fontFamily: "'Quicksand', sans-serif",
                   color: "#153316",
@@ -95,16 +102,18 @@ const Contact = () => {
               </Typography>
               <form>
                 <Container
-                  sx={{
+                  sx={
+                    isMobile ? {...responsiveStyle.form} :
+                    {
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "space-between",
                     margin: "3%",
-                    width: 'auto'
+                    width: "auto",
                   }}
                 >
-                  <Grid2 size={6}>
+                  <Grid2 size={isMobile ? 12 : 6}>
                     <TextField
                       name="firstName"
                       label="First Name"
@@ -133,7 +142,9 @@ const Contact = () => {
                         sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
                       error={error.lastName}
-                      helperText={error.lastName ? "Last Name is required." : ""}
+                      helperText={
+                        error.lastName ? "Last Name is required." : ""
+                      }
                     />
                     <TextField
                       name="email"
@@ -167,7 +178,7 @@ const Contact = () => {
                     />
                   </Grid2>
 
-                  <Grid2 size={6} sx={{ alignSelf: "flex-start" }}>
+                  <Grid2 size={isMobile? 12 : 6} sx={{ alignSelf: "flex-start" }}>
                     <TextField
                       sx={{ marginBottom: "2%" }}
                       label="Enter your message"
@@ -185,7 +196,10 @@ const Contact = () => {
                   </Grid2>
                 </Container>
 
-                <Grid2 size={12} sx={{display: 'flex', justifyContent: 'center'}}>
+                <Grid2
+                  size={12}
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
                   <Button
                     type="submit"
                     onClick={handleSubmit}
@@ -217,3 +231,21 @@ const Contact = () => {
 };
 
 export default Contact;
+
+const responsiveStyle = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-between",
+    margin: "3%",
+    width: "auto",
+    fontSize: '1rem'
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+};

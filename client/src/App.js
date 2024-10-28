@@ -11,10 +11,14 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
+import MobileDashboard from "./pages/MobileDashboard";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authUser, setAuthUser] = useState({});
+  const isMobile = useMediaQuery("(max-width:600px)");
+
 
   useEffect(() => {
     const checkAuth = () => {
@@ -54,7 +58,7 @@ function App() {
                 onLogin={handleLogin}
               />
             ) : (
-              <Dashboard authUser={authUser} auth={isAuthenticated} />
+              isMobile ? <MobileDashboard /> : <Dashboard authUser={authUser} auth={isAuthenticated} />
             )
           }
         />
@@ -66,7 +70,7 @@ function App() {
           path="/dashboard"
           element={
             isAuthenticated ? (
-              <Dashboard authUser={authUser} auth={isAuthenticated} />
+              isMobile ? <MobileDashboard authUser={authUser} auth={isAuthenticated}/> : <Dashboard authUser={authUser} auth={isAuthenticated} />
             ) : (
               <Home
                 authUser={authUser}

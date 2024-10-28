@@ -18,7 +18,7 @@ import { jwtDecode } from "jwt-decode";
 import { getUser } from "../api/usersAPI";
 
 const pages = ["Home", "Contact", "Dashboard", "Analytics"];
-const settings = ["Profile", "Dashboard", "Logout"];
+const settings = ["Profile", "Logout"];
 
 function Navbar({ auth, onLogout }) {
   const navigate = useNavigate();
@@ -101,12 +101,6 @@ function Navbar({ auth, onLogout }) {
         toast.success("Good bye!");
         navigate("/");
         onLogout();
-      }
-    }
-    if (setting === "Dashboard") {
-      navigate("/dashboard");
-      if (!auth) {
-        toast.warn("Login first");
       }
     }
 
@@ -227,6 +221,7 @@ function Navbar({ auth, onLogout }) {
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      {anchorElUser && user.first_name}
                       <Avatar>
                         {user.first_name
                           ? user.first_name[0].toUpperCase()
@@ -271,61 +266,3 @@ function Navbar({ auth, onLogout }) {
   );
 }
 export default Navbar;
-
-// import React from "react";
-// import "./Navbar.css";
-// import { Typography, Button, useMediaQuery } from "@mui/material";
-
-// const Navbar = () => {
-//     const isMobile = useMediaQuery("(max-width:600px)");
-//   return (
-//     <header>
-//       <Typography
-//         sx={{
-//           marginLeft: "1%",
-//           color: "#153316",
-//           fontFamily: '"Montserrat", sans-serif',
-//           fontSize: isMobile ? "1.5rem" : "2rem"
-//         }}
-//       >
-//         Expenses Tracker
-//       </Typography>
-//       <div className="navbar-button">
-//         <Button
-//           sx={{
-//             textDecoration: "none",
-//             fontFamily: "'Montserrat', sans-serif",
-//             padding: "6px 12px",
-//             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-//             color: "#fff",
-//             backgroundColor: "#4caf50",
-//             "&:hover": {
-//               backgroundColor: "#317434",
-//             },
-//             fontSize: isMobile ? "0.9rem" : "1rem", // Responsive font size
-//           }}
-//         >
-//           Login
-//         </Button>
-//         <Button
-//           sx={{
-//             textDecoration: "none",
-//             fontFamily: "'Montserrat', sans-serif",
-//             padding: "6px 16px",
-//             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-//             color: "#fff",
-//             backgroundColor: "#4caf50",
-//             "&:hover": {
-//               backgroundColor: "#317434",
-//             },
-//             fontSize: isMobile ? "0.9rem" : "1rem", // Responsive font size
-//           }}
-//         >
-//           Register
-//         </Button>
-//       </div>
-//     </header>
-//   );
-// };
-
-// export default Navbar;
