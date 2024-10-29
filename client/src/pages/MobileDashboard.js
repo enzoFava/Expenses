@@ -2,13 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Box, Grid2, Typography, Container } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Doughnut } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { getExpenses, getIncomes } from "../api/expensesAPI";
 import { jwtDecode } from "jwt-decode";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -16,38 +11,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import AddIncomeDialog from "../components/dialogs/AddIncomeDialog";
 import AddExpenseDialog from "../components/dialogs/AddExpenseDialog";
 
-// Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-// Define the doughnutLabel plugin
-const doughnutLabelPlugin = {
-  id: "doughnutLabel",
-  afterDraw(chart) {
-    const { ctx, chartArea, config } = chart;
-    if (!chartArea) return;
-
-    const { width, height } = chartArea;
-    const xCoor = width / 2;
-    const yCoor = height / 1.5;
-
-    ctx.save();
-    ctx.font = "25px Quicksand, sans-serif";
-    ctx.fillStyle = "#153316";
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-
-    // Render dynamic monthIncome value
-    const monthIncome = config.options.monthIncome || 0;
-    ctx.fillText(`+ $ ${monthIncome}`, xCoor, yCoor );
-
-    ctx.fillStyle = "red";
-    const monthOutcome = config.options.monthOutcome || 0;
-    ctx.fillText(`- $ ${monthOutcome}`, xCoor, yCoor + 45);
-    ctx.restore();
-  },
-};
-
-ChartJS.register(doughnutLabelPlugin);
 
 const MobileDashboard = () => {
   const getCurrentDate = () => {
@@ -169,14 +133,6 @@ const MobileDashboard = () => {
     ],
   };
 
-  const chartOptions = {
-    plugins: {
-      doughnutLabel: doughnutLabelPlugin,
-    },
-    monthIncome,
-    monthOutcome, // Pass monthIncome to options
-  };
-
   return (
     <>
       <Box
@@ -219,13 +175,51 @@ const MobileDashboard = () => {
           />
         </Grid2>
 
-        <Grid2 sx={{ height: "60%", width: "100%", margin: "auto", marginTop: '5%' }}>
-          <Doughnut data={data} options={chartOptions} />
+        <Grid2
+          sx={{ height: "60%", width: "100%", margin: "auto", marginTop: "5%" }}
+        >
+          <Pie data={data} />
         </Grid2>
 
-        <Container sx={{marginTop: '3%', paddingLeft: '1%'}}>
-          <Typography sx={{textAlign: 'center', color: '#153316'}}>
-            {stringCurrentMonth(currentMonth)} total budget: $ {monthIncome-monthOutcome}
+        <Container sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography
+            sx={{
+              width: "25%",
+              margin: "5%",
+              color: "red",
+              fontFamily: "Quicksand, sans-serif",
+              fontWeight: 600,
+              fontSize: "1.2rem",
+            }}
+          >
+            -$ {monthOutcome}
+          </Typography>
+          <Typography
+            sx={{
+              width: "25%",
+              margin: "5%",
+              color: "darkgreen",
+              fontFamily: "Quicksand, sans-serif",
+              fontWeight: 600,
+              fontSize: "1.2rem",
+            }}
+          >
+            +$ {monthIncome}
+          </Typography>
+        </Container>
+
+        <Container sx={{ marginTop: "3%", paddingLeft: "1%" }}>
+          <Typography
+            sx={{
+              textAlign: "center",
+              color: "#153316",
+              fontFamily: "Quicksand, sans-serif",
+              fontWeight: 600,
+              fontSize: "1.4rem",
+            }}
+          >
+            {stringCurrentMonth(currentMonth)} budget: ${" "}
+            {monthIncome - monthOutcome}
           </Typography>
         </Container>
 
