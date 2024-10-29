@@ -219,7 +219,7 @@ const MobileDashboard = () => {
           />
         </Grid2>
 
-        <Grid2 sx={{ height: "100%", width: "100%", margin: "auto" }}>
+        <Grid2 sx={{ height: "60%", width: "100%", margin: "auto", marginTop: '5%' }}>
           <Doughnut data={data} options={chartOptions} />
         </Grid2>
 
