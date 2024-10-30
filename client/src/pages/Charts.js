@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import { getUser } from "../api/usersAPI";
 import { getExpenses, getIncomes } from "../api/expensesAPI";
 import { jwtDecode } from "jwt-decode";
-import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { Chart } from "chart.js/auto";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 
 const Charts = () => {
+  const isMobile = useMediaQuery("(max-width:600px)");
+
   const outCat = [
     "clothes",
     "entertainment",
@@ -63,7 +72,12 @@ const Charts = () => {
     for (let i = startMonth; i <= parseInt(currentMonth, 10) - 1; i++) {
       // Adjusting index to wrap around if it goes below 0 (e.g., 'January')
       const monthIndex = (i + 12) % 12;
-      labels.push(stringCurrentMonth(String(monthIndex + 1).padStart(2, "0")).substring(0,3));
+      labels.push(
+        stringCurrentMonth(String(monthIndex + 1).padStart(2, "0")).substring(
+          0,
+          3
+        )
+      );
     }
 
     return labels;
@@ -104,7 +118,6 @@ const Charts = () => {
     onload();
   }, [user]);
 
-
   const getMonthlySum = (data, month) => {
     if (!Array.isArray(data)) return 0;
     return data
@@ -133,9 +146,9 @@ const Charts = () => {
     return monthlyTotals;
   };
 
-
-  const budget = (getMonthlyTotals(incomes).reduce((partialSum, a) => partialSum + a, 0) - getMonthlyTotals(outcomes).reduce((partialSum, a) => partialSum + a, 0))
-
+  const budget =
+    getMonthlyTotals(incomes).reduce((partialSum, a) => partialSum + a, 0) -
+    getMonthlyTotals(outcomes).reduce((partialSum, a) => partialSum + a, 0);
 
   return (
     <>
@@ -274,55 +287,57 @@ const Charts = () => {
           </CardContent>
         </Card>
 
-        <Card
-          sx={{
-            height: "65%",
-            width: "30%",
-            opacity: "85%",
-            borderRadius: "10px",
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          <CardHeader
-            title={
-              <Typography
-                sx={{
-                  fontFamily: "Quicksand, sans-serif",
-                  fontSize: "1.3rem",
-                  fontWeight: "900",
-                }}
-              >
-                {stringCurrentMonth(currentMonth)} expenses:
-              </Typography>
-            }
-          />
-          <CardContent sx={{ height: "80%", paddingTop: "0%" }}>
-            <Doughnut
-              options={{
-                responsive: true, // Makes the chart responsive
-                maintainAspectRatio: false, // Allows the chart to stretch
-                plugins: {
-                  legend: {
-                    position: "top", // Legend at top to save horizontal space
-                    labels: { boxWidth: 12, padding: 10 },
-                  },
-                },
-              }}
-              data={{
-                labels: outCat.map((cat) => cat),
-                datasets: [
-                  {
-                    label: "sum",
-                    data: outCat.map((cat) =>
-                      getCategorySum(outcomes, currentMonth, cat)
-                    ),
-                    borderRadius: 7,
-                  },
-                ],
-              }}
+        {!isMobile && (
+          <Card
+            sx={{
+              height: "65%",
+              width: "30%",
+              opacity: "85%",
+              borderRadius: "10px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <CardHeader
+              title={
+                <Typography
+                  sx={{
+                    fontFamily: "Quicksand, sans-serif",
+                    fontSize: "1.3rem",
+                    fontWeight: "900",
+                  }}
+                >
+                  {stringCurrentMonth(currentMonth)} expenses:
+                </Typography>
+              }
             />
-          </CardContent>
-        </Card>
+            <CardContent sx={{ height: "80%", paddingTop: "0%" }}>
+              <Doughnut
+                options={{
+                  responsive: true, // Makes the chart responsive
+                  maintainAspectRatio: false, // Allows the chart to stretch
+                  plugins: {
+                    legend: {
+                      position: "top", // Legend at top to save horizontal space
+                      labels: { boxWidth: 12, padding: 10 },
+                    },
+                  },
+                }}
+                data={{
+                  labels: outCat.map((cat) => cat),
+                  datasets: [
+                    {
+                      label: "sum",
+                      data: outCat.map((cat) =>
+                        getCategorySum(outcomes, currentMonth, cat)
+                      ),
+                      borderRadius: 7,
+                    },
+                  ],
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
       </Box>
     </>
   );

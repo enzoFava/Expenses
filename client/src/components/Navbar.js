@@ -16,11 +16,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { getUser } from "../api/usersAPI";
+import { useMediaQuery } from "@mui/material";
 
 const pages = ["Home", "Contact", "Dashboard", "Analytics"];
 const settings = ["Profile", "Logout"];
 
+
 function Navbar({ auth, onLogout }) {
+  const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
   const location = useLocation();
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -56,9 +59,12 @@ function Navbar({ auth, onLogout }) {
     if (action === "C") {
       const from = location.pathname;
       if (from === "/") {
-        window.scrollTo({
-          top: 900,
+        window.scrollTo(!isMobile ? {
+          top: 650,
           behavior: "smooth",
+        } : {
+          top: 850,
+          behavior: 'smooth',
         });
       }
       setScrollToContact(true);
@@ -84,13 +90,16 @@ function Navbar({ auth, onLogout }) {
 
   useEffect(() => {
     if (scrollToContact && location.pathname === "/home") {
-      window.scrollTo({
-        top: 900,
+      window.scrollTo(!isMobile ? {
+        top: 650,
         behavior: "smooth",
+      } : {
+        top: 850,
+        behavior: 'smooth',
       });
       setScrollToContact(false);
     }
-  }, [location.pathname, scrollToContact]);
+  }, [location.pathname, scrollToContact, isMobile]);
 
   const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);

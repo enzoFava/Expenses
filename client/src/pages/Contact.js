@@ -121,7 +121,7 @@ const Contact = () => {
                       fullWidth
                       margin="normal"
                       required
-                      variant="standard"
+                      variant="outlined"
                       InputProps={{
                         sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
@@ -137,7 +137,7 @@ const Contact = () => {
                       fullWidth
                       margin="normal"
                       required
-                      variant="standard"
+                      variant="outlined"
                       InputProps={{
                         sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
@@ -154,7 +154,7 @@ const Contact = () => {
                       fullWidth
                       margin="normal"
                       required
-                      variant="standard"
+                      variant="outlined"
                       InputProps={{
                         sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
@@ -169,7 +169,7 @@ const Contact = () => {
                       fullWidth
                       margin="normal"
                       required
-                      variant="standard"
+                      variant="outlined"
                       InputProps={{
                         sx: { fontFamily: "'Quicksand', sans-serif" },
                       }} // Custom Input styles
@@ -183,12 +183,12 @@ const Contact = () => {
                       sx={{ marginBottom: "2%" }}
                       label="Enter your message"
                       multiline
-                      rows={10.4}
+                      rows={!isMobile ? 10.4 : 3}
                       fullWidth
                       margin="normal"
                       name="content"
                       required
-                      variant="standard"
+                      variant="outlined"
                       onChange={handleChange}
                       error={error.content}
                       helperText={error.content ? "Content is required." : ""}
@@ -240,7 +240,8 @@ const responsiveStyle = {
     justifyContent: "space-between",
     margin: "3%",
     width: "auto",
-    fontSize: '1rem'
+    fontSize: '1rem',
+    height: '89vh'
   },
   form: {
     display: 'flex',
