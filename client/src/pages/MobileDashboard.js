@@ -323,47 +323,10 @@ const MobileDashboard = () => {
             {monthIncome - monthOutcome}
           </Typography>
         </Container>
-
-        <Grid2
-          size={12}
-          sx={{
-            marginTop: "3%",
-            display: "flex",
-            flexDirection: "row",
-            height: "20%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <RemoveCircleIcon
-            onClick={() => setOpenAdd(true)}
-            sx={{
-              marginRight: "3%",
-              height: "100%",
-              width: "25%",
-              color: "red",
-              "&:hover": { color: "darkred" },
-            }}
-          />
-          <AddCircleIcon
-            onClick={() => setOpenIncome(true)}
-            sx={{
-              marginLeft: "3%",
-              height: "100%",
-              width: "25%",
-              color: "#4caf50",
-              "&:hover": { color: "#388e3c" },
-            }}
-          />
-        </Grid2>
-
-        {/* Slider for Table with user data */}
-
         <Grid2
           sx={{
             position: "relative",
             height: "100vh",
-            paddingBottom: "10vh",
             width: "100vw",
             maxWidth: "100%",
             boxSizing: "border-box",
@@ -374,7 +337,7 @@ const MobileDashboard = () => {
             sx={{
               boxSizing: "border-box",
               position: "absolute",
-              bottom: isTableVisible ? "55%" : "-1000%", // Slide in/out
+              bottom: isTableVisible ? "40%" : "-1000%", // Slide in/out
               left: 0,
               width: "100%",
               height: "75vh",
@@ -410,7 +373,10 @@ const MobileDashboard = () => {
                 >
                   Transactions
                 </Typography>
-                <IconButton onClick={handleToggle} sx={{margin: 0, padding: 0}}>
+                <IconButton
+                  onClick={handleToggle}
+                  sx={{ margin: 0, padding: 0 }}
+                >
                   <KeyboardArrowDownIcon fontSize="large" />
                 </IconButton>
               </Container>
@@ -538,12 +504,46 @@ const MobileDashboard = () => {
             <Container
               sx={{ display: "flex", justifyContent: "end", padding: 4 }}
             >
-              <IconButton onClick={handleToggle} sx={{margin: 0, padding: 0}}>
+              <IconButton onClick={handleToggle} sx={{ margin: 0, padding: 0 }}>
                 <KeyboardArrowUpIcon fontSize="large" />
               </IconButton>
             </Container>
           )}
         </Grid2>
+        <Grid2
+          size={12}
+          sx={{
+            marginTop: "3%",
+            display: "flex",
+            flexDirection: "row",
+            height: "20%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <RemoveCircleIcon
+            onClick={() => setOpenAdd(true)}
+            sx={{
+              marginRight: "3%",
+              height: "100%",
+              width: "25%",
+              color: "red",
+              "&:hover": { color: "darkred" },
+            }}
+          />
+          <AddCircleIcon
+            onClick={() => setOpenIncome(true)}
+            sx={{
+              marginLeft: "3%",
+              height: "100%",
+              width: "25%",
+              color: "#4caf50",
+              "&:hover": { color: "#388e3c" },
+            }}
+          />
+        </Grid2>
+
+        {/* Slider for Table with user data */}
       </Box>
 
       {/* Dialogs */}
