@@ -229,7 +229,7 @@ const MobileDashboard = () => {
     <>
       <Box
         sx={{
-          height: "90vh",
+          height: "100vh",
           width: "100%",
           display: "flex",
           flexDirection: "column",
