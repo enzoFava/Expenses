@@ -391,7 +391,7 @@ const MobileDashboard = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "end",
-                  padding: 2,
+                  padding: 4,
                   height: "7%",
                   backgroundColor: isTableVisible ? "#b9eeba" : "white",
                 }}
@@ -410,7 +410,7 @@ const MobileDashboard = () => {
                 >
                   Transactions
                 </Typography>
-                <IconButton onClick={handleToggle}>
+                <IconButton onClick={handleToggle} sx={{margin: 0, padding: 0}}>
                   <KeyboardArrowDownIcon fontSize="large" />
                 </IconButton>
               </Container>
@@ -536,9 +536,9 @@ const MobileDashboard = () => {
           {/* Open Button (Up Arrow) - Only shows when table is hidden */}
           {!isTableVisible && (
             <Container
-              sx={{ display: "flex", justifyContent: "end", padding: 2 }}
+              sx={{ display: "flex", justifyContent: "end", padding: 4 }}
             >
-              <IconButton onClick={handleToggle}>
+              <IconButton onClick={handleToggle} sx={{margin: 0, padding: 0}}>
                 <KeyboardArrowUpIcon fontSize="large" />
               </IconButton>
             </Container>
