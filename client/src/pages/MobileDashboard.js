@@ -233,6 +233,7 @@ const MobileDashboard = () => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
+          overflowY: "hidden",
         }}
       >
         <Grid2
@@ -268,12 +269,20 @@ const MobileDashboard = () => {
         </Grid2>
 
         <Grid2
-          sx={{ height: "60%", width: "100%", margin: "auto", marginTop: "5%" }}
+          sx={{
+            height: "50%",
+            width: "100%",
+            margin: "auto",
+            marginTop: "5%",
+            justifyItems: "center",
+          }}
         >
           <Pie data={data} />
         </Grid2>
 
-        <Container sx={{ display: "flex", justifyContent: "center" }}>
+        <Container
+          sx={{ display: "flex", justifyContent: "center", height: "4%" }}
+        >
           <Typography
             sx={{
               width: "25%",
@@ -300,7 +309,7 @@ const MobileDashboard = () => {
           </Typography>
         </Container>
 
-        <Container sx={{ marginTop: "3%", paddingLeft: "1%" }}>
+        <Container sx={{ marginTop: "7%", paddingLeft: "1%", height: "4%" }}>
           <Typography
             sx={{
               textAlign: "center",
@@ -318,7 +327,7 @@ const MobileDashboard = () => {
         <Grid2
           size={12}
           sx={{
-            margin: "1%",
+            marginTop: "3%",
             display: "flex",
             flexDirection: "row",
             height: "20%",
@@ -350,18 +359,22 @@ const MobileDashboard = () => {
 
         {/* Slider for Table with user data */}
 
-        <Box
+        <Grid2
           sx={{
             position: "relative",
-            minHeight: "100vh",
+            height: "100vh",
             paddingBottom: "10vh",
+            width: "100vw",
+            maxWidth: "100%",
+            boxSizing: "border-box",
           }}
         >
           {/* Sliding Table Container */}
           <Box
             sx={{
-              position: "fixed",
-              bottom: isTableVisible ? "10%" : "-100%", // Slide in/out
+              boxSizing: "border-box",
+              position: "absolute",
+              bottom: isTableVisible ? "55%" : "-1000%", // Slide in/out
               left: 0,
               width: "100%",
               height: "75vh",
@@ -369,26 +382,52 @@ const MobileDashboard = () => {
               backgroundColor: "white",
               boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.1)",
               overflowY: "auto",
+              overflowX: "hidden",
             }}
           >
             {/* Close Button (Down Arrow) */}
-            <Container
-              sx={{ display: "flex", justifyContent: "end", padding: 1 }}
-            >
-              <IconButton onClick={handleToggle}>
-                <KeyboardArrowDownIcon fontSize="large" />
-              </IconButton>
-            </Container>
-
+            {isTableVisible && (
+              <Container
+                sx={{
+                  display: "flex",
+                  justifyContent: "end",
+                  padding: 2,
+                  height: "7%",
+                  backgroundColor: isTableVisible ? "#b9eeba" : "white",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  sx={{
+                    alignSelf: "center",
+                    position: "fixed",
+                    left: 0,
+                    paddingLeft: "35%",
+                    fontFamily: "Quicksand, sans-serif",
+                    fontWeight: 600,
+                    color: "#153316",
+                  }}
+                >
+                  Transactions
+                </Typography>
+                <IconButton onClick={handleToggle}>
+                  <KeyboardArrowDownIcon fontSize="large" />
+                </IconButton>
+              </Container>
+            )}
             <TableContainer
               component={Paper}
               sx={{
                 ...styles.tableContainer,
                 overflowX: "auto",
                 height: "100%",
+                width: "100%",
               }}
             >
-              <Table stickyHeader>
+              <Table
+                stickyHeader
+                sx={{ maxWidth: "100%", overflowX: "hidden" }}
+              >
                 <TableHead>
                   <TableRow>
                     {["Transaction", "Amount ($)", "Edit", "Delete"].map(
@@ -412,13 +451,21 @@ const MobileDashboard = () => {
                       <TableRow key={item.id}>
                         {/* Transaction Column: Category, Date, and Title */}
                         <TableCell
-                          sx={{ ...styles.tableCell, width: "40% !important", textAlign: "left", paddingLeft: '2% !important' }}
+                          sx={{
+                            ...styles.tableCell,
+                            width: "40% !important",
+                            textAlign: "left",
+                            paddingLeft: "2% !important",
+                          }}
                         >
                           <span style={{ fontWeight: 700 }}>
                             {item.category}
                           </span>
                           &nbsp;|&nbsp;
-                          <span>{stringCurrentMonth(currentMonth)}{new Date(item.date).getDate()}</span>
+                          <span>
+                            {stringCurrentMonth(currentMonth)}
+                            {new Date(item.date).getDate()}
+                          </span>
                           <br />
                           <span style={{ fontSize: "0.8rem", color: "#ccc" }}>
                             {item.title}
@@ -427,7 +474,12 @@ const MobileDashboard = () => {
 
                         {/* Amount Column */}
                         <TableCell
-                          sx={{ ...styles.tableCell, width: "20% !important", textAlign: "center", fontSize: '1.1rem !important' }}
+                          sx={{
+                            ...styles.tableCell,
+                            width: "20% !important",
+                            textAlign: "center",
+                            fontSize: "1.1rem !important",
+                          }}
                         >
                           <span
                             style={{
@@ -442,7 +494,11 @@ const MobileDashboard = () => {
 
                         {/* Edit Button Column */}
                         <TableCell
-                          sx={{ ...styles.tableCell, width: "20% !important", textAlign: "center" }}
+                          sx={{
+                            ...styles.tableCell,
+                            width: "20% !important",
+                            textAlign: "center",
+                          }}
                         >
                           <IconButton
                             sx={styles.editButton}
@@ -454,7 +510,11 @@ const MobileDashboard = () => {
 
                         {/* Delete Button Column */}
                         <TableCell
-                          sx={{ ...styles.tableCell, width: "20% !important", textAlign: "center" }}
+                          sx={{
+                            ...styles.tableCell,
+                            marginRight: "0%",
+                            textAlign: "center",
+                          }}
                         >
                           <IconButton
                             sx={styles.deleteButton}
@@ -483,7 +543,7 @@ const MobileDashboard = () => {
               </IconButton>
             </Container>
           )}
-        </Box>
+        </Grid2>
       </Box>
 
       {/* Dialogs */}
