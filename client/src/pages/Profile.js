@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Grid2,
+  Grid,
   Card,
   Typography,
   Avatar,
@@ -12,6 +12,7 @@ import {
   CardHeader,
   Button,
   CircularProgress,
+  useMediaQuery,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,6 +23,7 @@ import { jwtDecode } from "jwt-decode";
 import { getUser, updateUser, deleteUser } from "../api/usersAPI";
 
 const Profile = ({ onLogout }) => {
+  const isMobile = useMediaQuery("(max-width:600px)");
   const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [showForm, setShowForm] = useState(false);
@@ -46,7 +48,7 @@ const Profile = ({ onLogout }) => {
       };
       fetchUser();
     }
-  }, []);
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,50 +80,54 @@ const Profile = ({ onLogout }) => {
 
   const handleDelete = async (password) => {
     try {
-      setLoading(true)
+      setLoading(true);
       await deleteUser(password.password, user.email, user.id);
       localStorage.removeItem("token");
       toast.error("Account deleted");
-      setLoading(false)
-      setShowConfirm(false)
+      setLoading(false);
+      setShowConfirm(false);
       navigate("/");
       onLogout();
     } catch (error) {
+      setLoading(false);
       console.error(error);
       if (error.status === 401) {
-        setLoading(false)
         toast.warn("Invalid credentials");
       } else if (error.status === 400) {
-        setLoading(false)
         toast.warn("User not found");
       } else if (error.status === 403) {
-        setLoading(false)
-        toast.warn("Cant delete Test user")
+        toast.warn("Can't delete Test user");
       } else {
-        setLoading(false)
         toast.warn("Server error");
       }
     }
   };
 
   return (
-    <Grid2
+    <Grid
       container
+      spacing={2}
       sx={{
-        ...styles.grid12,
-        position: "relative",
-        overflow: "hidden",
+        marginTop: isMobile? '15%' : "8%",
+        marginLeft: "auto",  // Centering the component with margins
+        marginRight: "auto",
+        paddingBottom: "5%",
+        width: "90%", // Restricting width to 90% of the viewport
+        maxWidth: "1200px", // Maximum width for larger screens
+        opacity: "90%",
       }}
     >
-      <Grid2
-        size={6}
+      <Grid
+        item
+        xs={12}
+        sm={6}
         sx={{
-          ...styles.grid6,
-          transform: showForm ? "translateX(0)" : "translateX(50%)",
-          transition: "transform 0.2s ease-in-out",
+          display: "flex",
+          justifyContent: "center",
+          transition: "transform 0.5s ease-in-out",
         }}
       >
-        <Card sx={{ ...styles.card, width: "60%", height: "fit-content" }}>
+        <Card sx={{ ...styles.card, width: "100%", padding: "2%" }}>
           <Typography
             variant="h5"
             sx={{
@@ -182,17 +188,18 @@ const Profile = ({ onLogout }) => {
             />
           </CardContent>
         </Card>
-      </Grid2>
+      </Grid>
       <Zoom in={showForm}>
-        <Grid2 size={6} sx={{ ...styles.grid6, justifyContent: "flex-start" }}>
+        <Grid item xs={12} sm={6} sx={{ display: "flex", justifyContent: "flex-start" }}>
           <Card
             sx={{
               ...styles.card,
-              width: "60%",
+              width: "100%",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              padding: "2%",
             }}
           >
             <Typography
@@ -205,8 +212,7 @@ const Profile = ({ onLogout }) => {
                 padding: "5%",
                 paddingBottom: "0%",
                 alignItems: "center",
-                width: "90%",
-                paddingRight: "0%",
+                width: "100%",
               }}
             >
               Edit your data
@@ -224,13 +230,12 @@ const Profile = ({ onLogout }) => {
             />
 
             <CardContent sx={{ paddingTop: "0%" }}>
-              <FormControl>
+              <FormControl fullWidth>
                 <TextField
                   name="first_name"
                   label="First Name"
                   value={user.first_name || ""}
                   onChange={handleChange}
-                  fullWidth
                   margin="normal"
                   error={error.first_name}
                   helperText={error.first_name ? "First Name is required." : ""}
@@ -256,7 +261,6 @@ const Profile = ({ onLogout }) => {
                   label="Last Name"
                   value={user.last_name || ""}
                   onChange={handleChange}
-                  fullWidth
                   margin="normal"
                   error={error.last_name}
                   helperText={error.last_name ? "Last Name is required." : ""}
@@ -282,9 +286,7 @@ const Profile = ({ onLogout }) => {
                   label="Age"
                   type="number"
                   value={user.age || ""}
-                  //defaultValue={user.last_name}
                   onChange={handleChange}
-                  fullWidth
                   margin="normal"
                   InputLabelProps={{
                     sx: {
@@ -326,7 +328,7 @@ const Profile = ({ onLogout }) => {
               </FormControl>
             </CardContent>
           </Card>
-        </Grid2>
+        </Grid>
       </Zoom>
       <ConfirmDialog
         open={showConfirm}
@@ -336,7 +338,7 @@ const Profile = ({ onLogout }) => {
         user={user}
         loading={loading}
       />
-    </Grid2>
+    </Grid>
   );
 };
 
@@ -344,23 +346,10 @@ export default Profile;
 
 // Styles object
 const styles = {
-  grid12: {
-    marginTop: "8%",
-    opacity: "90%",
-  },
-  grid6: {
-    padding: "1%",
-    display: "flex",
-    justifyContent: "center",
-    transition: "transform 0.5s ease-in-out",
-  },
   card: {
     backgroundColor: "#1e1e1e",
     color: "white",
     fontFamily: "Quicksand, sans-serif",
     borderRadius: "10px",
-  },
-  text: {
-    color: "white",
   },
 };

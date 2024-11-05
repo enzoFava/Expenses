@@ -156,7 +156,7 @@ const Charts = () => {
         sx={{
           height: "50%",
           width: "100%",
-          marginTop: "7%",
+          marginTop: isMobile ? '32%' : "7%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -165,7 +165,7 @@ const Charts = () => {
         <Card
           sx={{
             height: "65%",
-            width: "65%",
+            width: isMobile ? '85%' : "30%",
             opacity: "85%",
             borderRadius: "10px",
             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
@@ -231,10 +231,11 @@ const Charts = () => {
         <Card
           sx={{
             height: "65%",
-            width: "30%",
+            width: isMobile ? '85%' : "30%",
             opacity: "85%",
             borderRadius: "10px",
             boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+            marginTop: isMobile && '10%'
           }}
         >
           <CardHeader

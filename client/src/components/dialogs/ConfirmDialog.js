@@ -31,8 +31,7 @@ function ConfirmDialog({
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
-    const password = e.target.value;
-    setPassword((prev) => ({ ...prev, password }));
+    setPassword(e.target.value);
   };
 
   return (
@@ -59,8 +58,6 @@ function ConfirmDialog({
         </IconButton>
 
         <Grid container spacing={2}>
-          {" "}
-          {/* Adjusted spacing for better responsiveness */}
           <Grid item xs={12}>
             <Box
               sx={{
@@ -70,43 +67,44 @@ function ConfirmDialog({
                 flexDirection: "column",
               }}
             >
-              <Typography
-                sx={{ fontFamily: "'Quicksand', sans-serif" }}
-                variant="h5"
-              >
+              <Typography sx={{ fontFamily: "'Quicksand', sans-serif" }} variant="h5">
                 Delete {title}
               </Typography>
-              <Typography
-                sx={{ fontFamily: "'Quicksand', sans-serif" }}
-                variant="body1"
-              >
+              <Typography sx={{ fontFamily: "'Quicksand', sans-serif" }} variant="body1">
                 Are you sure you want to delete {title}?
               </Typography>
             </Box>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
-          >
-            {user && (
+
+          {user && (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "center", md: "flex-end" },
+                justifyContent: { xs: "center", md: "flex-end" },
+                gap: "1rem",
+              }}
+            >
               <TextField
                 required
                 type={showPassword ? "text" : "password"}
                 label="Enter your password"
                 variant="outlined"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
                 InputProps={{
                   sx: {
-                    height: "36px", // Match button height
-                    padding: 0, // Remove extra padding
+                    height: "36px",
+                    padding: 0,
                     fontSize: "14px",
                     "&.Mui-focused fieldset": {
-                      borderWidth: "2px", // Fix border width when focused
+                      borderWidth: "2px",
                     },
                     "& input:-webkit-autofill": {
-                      WebkitBoxShadow: "0 0 0px 1000px white inset", // Remove yellow autofill background
-                      transition: "background-color 5000s ease-in-out 0s", // Avoid flicker
+                      WebkitBoxShadow: "0 0 0px 1000px white inset",
+                      transition: "background-color 5000s ease-in-out 0s",
                     },
                   },
                   endAdornment: (
@@ -153,38 +151,43 @@ function ConfirmDialog({
                     },
                   },
                 }}
-              >
-                ENTER PASSWORD
-              </TextField>
-            )}
+              />
 
-            <Button
-              sx={{ fontFamily: "'Quicksand', sans-serif" }}
-              onClick={closeDialog}
-              size="medium"
-              variant="contained"
-              color="primary"
-            >
-              Cancel
-            </Button>
-            <Button
-              sx={{ fontFamily: "'Quicksand', sans-serif" }}
-              onClick={() => {
-                user ? deleteFunction(password) : deleteFunction();
-                //toast.error(`${title} deleted`);
-                //closeDialog();
-              }}
-              size="medium"
-              variant="contained"
-              color="error"
-            >
-              {loading ? (
-                <CircularProgress size="25px" color="white" />
-              ) : (
-                "Delete"
-              )}
-            </Button>
-          </Grid>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: "1rem",
+                  mt: { xs: 2, md: 0 }, // Add top margin on mobile for spacing
+                  justifyContent: { xs: "center", md: "flex-end" },
+                }}
+              >
+                <Button
+                  sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                  onClick={closeDialog}
+                  size="medium"
+                  variant="contained"
+                  color="primary"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                  onClick={() => {
+                    user ? deleteFunction(password) : deleteFunction();
+                  }}
+                  size="medium"
+                  variant="contained"
+                  color="error"
+                >
+                  {loading ? (
+                    <CircularProgress size="25px" color="white" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
     </Dialog>
