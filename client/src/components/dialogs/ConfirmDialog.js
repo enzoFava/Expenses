@@ -67,27 +67,33 @@ function ConfirmDialog({
                 flexDirection: "column",
               }}
             >
-              <Typography sx={{ fontFamily: "'Quicksand', sans-serif" }} variant="h5">
+              <Typography
+                sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                variant="h5"
+              >
                 Delete {title}
               </Typography>
-              <Typography sx={{ fontFamily: "'Quicksand', sans-serif" }} variant="body1">
+              <Typography
+                sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                variant="body1"
+              >
                 Are you sure you want to delete {title}?
               </Typography>
             </Box>
           </Grid>
 
-          {user && (
-            <Grid
-              item
-              xs={12}
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                alignItems: { xs: "center", md: "flex-end" },
-                justifyContent: { xs: "center", md: "flex-end" },
-                gap: "1rem",
-              }}
-            >
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              alignItems: { xs: "center", md: "flex-end" },
+              justifyContent: { xs: "center", md: "flex-end" },
+              gap: "1rem",
+            }}
+          >
+            {user && (
               <TextField
                 required
                 type={showPassword ? "text" : "password"}
@@ -152,42 +158,41 @@ function ConfirmDialog({
                   },
                 }}
               />
-
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: "1rem",
-                  mt: { xs: 2, md: 0 }, // Add top margin on mobile for spacing
-                  justifyContent: { xs: "center", md: "flex-end" },
-                }}
+            )}
+            <Box
+              sx={{
+                display: "flex",
+                gap: "1rem",
+                mt: { xs: 2, md: 0 }, // Add top margin on mobile for spacing
+                justifyContent: { xs: "center", md: "flex-end" },
+              }}
+            >
+              <Button
+                sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                onClick={closeDialog}
+                size="medium"
+                variant="contained"
+                color="primary"
               >
-                <Button
-                  sx={{ fontFamily: "'Quicksand', sans-serif" }}
-                  onClick={closeDialog}
-                  size="medium"
-                  variant="contained"
-                  color="primary"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  sx={{ fontFamily: "'Quicksand', sans-serif" }}
-                  onClick={() => {
-                    user ? deleteFunction(password) : deleteFunction();
-                  }}
-                  size="medium"
-                  variant="contained"
-                  color="error"
-                >
-                  {loading ? (
-                    <CircularProgress size="25px" color="white" />
-                  ) : (
-                    "Delete"
-                  )}
-                </Button>
-              </Box>
-            </Grid>
-          )}
+                Cancel
+              </Button>
+              <Button
+                sx={{ fontFamily: "'Quicksand', sans-serif" }}
+                onClick={() => {
+                  user ? deleteFunction(password) : deleteFunction();
+                }}
+                size="medium"
+                variant="contained"
+                color="error"
+              >
+                {loading ? (
+                  <CircularProgress size="25px" color="white" />
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
       </DialogContent>
     </Dialog>
